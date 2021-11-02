@@ -1,0 +1,11 @@
+[package]
+name = "evolutionary-algorithms"
+version = "0.1.0"
+authors = ["Simon <Simon Naumov>"]
+edition = "2018"
+
+[dependencies]
+bit-vec = "0.6.3"
+rand = "0.8.4"
+# plotters = "0.3.1"
+plotly = "0.6.0"
