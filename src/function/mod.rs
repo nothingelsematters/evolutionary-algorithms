@@ -1,10 +1,9 @@
 use bit_vec::BitVec;
 
 pub mod jump;
-pub mod shifted_valley_jump;
 
 pub trait Function {
-    fn fitness(&self, bitvec: &BitVec) -> usize;
+    fn fitness(&self, bitvec: &BitVec) -> i64;
 
     fn n(&self) -> usize;
 

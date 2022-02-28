@@ -3,37 +3,50 @@ use plotly::common::{Orientation, Title};
 use plotly::layout::{Axis, BoxMode};
 use plotly::{BoxPlot, Layout, Plot};
 
-// use plotters::prelude::*;
+use plotters::prelude::*;
 
-// pub fn save_plot(
-//     mu: usize,
-//     result: Vec<usize>,
-//     caption: &str,
-// ) -> Result<(), Box<dyn std::error::Error>> {
-//     let root = BitMapBackend::new("plots/plot.png", (640, 480)).into_drawing_area();
-//     root.fill(&WHITE)?;
-//     let mut chart = ChartBuilder::on(&root)
-//         .caption(caption, ("sans-serif", 20).into_font())
-//         .margin(5)
-//         .x_label_area_size(30)
-//         .y_label_area_size(30)
-//         .build_cartesian_2d(0..result.len(), 0..mu)?;
+pub fn save_plot(
+    result: Vec<(usize, usize)>,
+    caption: &str,
+    label: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let root = BitMapBackend::new("plots/plot.png", (640, 480)).into_drawing_area();
+    root.fill(&WHITE)?;
+    let mut chart = ChartBuilder::on(&root)
+        .caption(caption, ("sans-serif", 20).into_font())
+        .margin(5)
+        .x_label_area_size(30)
+        .y_label_area_size(30)
+        .build_cartesian_2d(
+            result.iter().map(|(x, _)| x).min().unwrap() - 1
+                ..result.iter().map(|(x, _)| x).max().unwrap() + 1,
+            result.iter().map(|(_, y)| y).min().unwrap() - 1
+                ..result.iter().map(|(_, y)| y).max().unwrap() + 1,
+        )?;
 
-//     chart.configure_mesh().draw()?;
+    chart.configure_mesh().draw()?;
 
-//     chart
-//         .draw_series(LineSeries::new(result.into_iter().enumerate(), &RED))?
-//         .label("different mutants")
-//         .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
+    chart
+        .draw_series(LineSeries::new(result.iter().cloned(), &RED))?
+        .label(label)
+        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
 
-//     chart
-//         .configure_series_labels()
-//         .background_style(&WHITE.mix(0.8))
-//         .border_style(&BLACK)
-//         .draw()?;
+    chart
+        .draw_series(LineSeries::new(
+            result.into_iter().map(|(x, _)| (x, x)),
+            &BLACK,
+        ))?
+        .label("fitness")
+        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &BLACK));
 
-//     Ok(())
-// }
+    chart
+        .configure_series_labels()
+        .background_style(&WHITE.mix(0.8))
+        .border_style(&BLACK)
+        .draw()?;
+
+    Ok(())
+}
 
 pub fn save_box_plot(title: &str, text: &str, file_path: &str, nums: Vec<usize>) {
     let len = nums.len();

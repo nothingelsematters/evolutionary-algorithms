@@ -15,13 +15,13 @@ impl Jump {
 }
 
 impl Function for Jump {
-    fn fitness(&self, bitvec: &BitVec) -> usize {
+    fn fitness(&self, bitvec: &BitVec) -> i64 {
         let ones = bitvec.iter().filter(|x| *x).count();
 
         if (ones <= self.n - self.k) || (ones == self.n) {
-            ones + self.k
+            ones as i64
         } else {
-            self.n - ones
+            self.n as i64 - ones as i64 - self.k as i64
         }
     }
 

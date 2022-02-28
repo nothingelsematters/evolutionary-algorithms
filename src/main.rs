@@ -1,10 +1,18 @@
-use std::collections::HashMap;
-
-use evolutionary_algorithms::algorithm::{mu_plus_one::MuPlusOne, Algorithm};
+use evolutionary_algorithms::algorithm::{mu_plus_one, mu_plus_one::MuPlusOne};
 use evolutionary_algorithms::draw;
 use evolutionary_algorithms::function::jump::Jump;
+use evolutionary_algorithms::function::Function;
+use evolutionary_algorithms::MAP;
 
-fn main() {
+async fn run_task(i: i32, algorithm: mu_plus_one::Common, function: impl Function) {
+    println!("{}", i);
+    let algorithm = &algorithm as &dyn MuPlusOne;
+    algorithm.run(&function)
+}
+
+#[tokio::main]
+async fn main() {
+    // constants
     let n = 512; // 32, 64, 128, 256, 512, 1024
     let k = 4; // 2, 4, 6
 
@@ -12,28 +20,31 @@ fn main() {
     let crossover_probability = 0.99; // 0.99 (close to 1)
     let mutation_rate = 1.0 / n as f64; // 1/n
 
-    let algorithm = MuPlusOne::new(mu, crossover_probability, mutation_rate).unwrap();
+    let runs = 10_000;
+
+    // processing
+    let algorithm = mu_plus_one::Common::new(mu, crossover_probability, mutation_rate);
     let function = Jump::new(n, k);
 
-    let mut result = Vec::new();
-    let mut map = HashMap::new();
-
-    for i in 0..1 {
-        println!("{}", i);
-        let min = algorithm.run(Box::new(function));
-        result.push(min);
-        *map.entry(min).or_insert(0) += 1;
+    let tasks: Vec<_> = (0..runs)
+        .map(|i| tokio::task::spawn(run_task(i, algorithm, function)))
+        .collect();
+    for task in tasks {
+        task.await.ok();
     }
 
-    let title = format!(
-        "(μ + 1), μ = {} ( n/k ), p_c = {}, p_m = {} ( 1/n ) on Jump({}, {})",
-        mu, crossover_probability, mutation_rate, n, k
-    );
-    let text = format!("{:?}", map);
-    let file_path = format!(
-        "plots/plot_nk_{}_1n_Jump({},{}).html",
-        crossover_probability, n, k
-    );
+    let guard = MAP.lock().unwrap();
+    let mut vec = guard
+        .iter()
+        .map(|(key, (number, value))| (*key as usize, value / number))
+        .collect::<Vec<_>>();
+    vec.sort_unstable();
 
-    draw::save_box_plot(&title, &text, &file_path, result);
+    // saving results
+    println!("{:?}", vec);
+    let title = format!(
+        "(μ + 1) common: μ = {}, p_c = {}, p_m = {} (1/n) on Jump({}, {}), {} runs",
+        mu, crossover_probability, mutation_rate, n, k, runs,
+    );
+    draw::save_plot(vec, &title, "1 positions for first max fitness").unwrap();
 }
