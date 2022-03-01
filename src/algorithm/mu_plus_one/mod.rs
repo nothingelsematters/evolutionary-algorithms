@@ -1,11 +1,11 @@
-use std::cmp::Ordering;
-use std::collections::BinaryHeap;
-use std::collections::HashSet;
-
-use bit_vec::BitVec;
-use rand::prelude::*;
-
+use super::{crossover, mutate};
 use crate::function::Function;
+use bit_vec::BitVec;
+use lazy_static::lazy_static;
+use rand::prelude::*;
+use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashSet};
+use std::sync::atomic::{AtomicUsize, Ordering as AtomicOrdering};
 
 pub mod common;
 pub mod convex_hull_maximization;
@@ -13,11 +13,10 @@ pub mod convex_hull_maximization;
 pub use common::Common;
 pub use convex_hull_maximization::ConvexHullMaximization;
 
-use super::crossover;
-use super::mutate;
-
 // a crutch for multi item heap
-static mut MUTANT_NUMBER: usize = 0;
+lazy_static! {
+    pub static ref MUTANT_NUMBER: AtomicUsize = AtomicUsize::new(0);
+}
 
 #[derive(PartialEq, Eq)]
 pub struct Mutant {
@@ -46,14 +45,10 @@ impl Ord for Mutant {
 
 impl Mutant {
     fn new(bitvec: BitVec, function: &dyn Function) -> Mutant {
-        unsafe {
-            MUTANT_NUMBER += 1;
-
-            Mutant {
-                fitness: function.fitness(&bitvec),
-                bitvec,
-                crutch: MUTANT_NUMBER,
-            }
+        Mutant {
+            fitness: function.fitness(&bitvec),
+            bitvec,
+            crutch: MUTANT_NUMBER.fetch_add(1, AtomicOrdering::SeqCst),
         }
     }
 }
@@ -89,20 +84,24 @@ pub trait MuPlusOne {
 
         let mut set = HashSet::new();
         loop {
-            let max_fitness = population.iter().map(|x| x.fitness).max().unwrap();
-            if !set.contains(&max_fitness) {
-                set.insert(max_fitness);
-                let mut guard = crate::MAP.lock().unwrap();
-                let entry = guard.entry(max_fitness).or_insert((0, 0));
-                let positions = population.iter().fold(
-                    (0..function.n()).map(|_| false).collect::<BitVec>(),
-                    |a, b| a.iter().zip(b.bitvec.iter()).map(|(x, y)| x || y).collect(),
-                );
-                *entry = (
-                    entry.0 + 1,
-                    entry.1 + positions.iter().filter(|x| *x).count(),
-                );
+            // Run analysis block
+            {
+                let max_fitness = population.iter().map(|x| x.fitness).max().unwrap();
+                if !set.contains(&max_fitness) {
+                    set.insert(max_fitness);
+                    let mut guard = crate::MAP.lock().unwrap();
+                    let entry = guard.entry(max_fitness).or_insert((0, 0));
+                    let positions = population.iter().fold(
+                        (0..function.n()).map(|_| false).collect::<BitVec>(),
+                        |a, b| a.iter().zip(b.bitvec.iter()).map(|(x, y)| x || y).collect(),
+                    );
+                    *entry = (
+                        entry.0 + 1,
+                        entry.1 + positions.iter().filter(|x| *x).count(),
+                    );
+                }
             }
+
             let p: f64 = rand::thread_rng().gen();
             let x = get_random(&population);
 

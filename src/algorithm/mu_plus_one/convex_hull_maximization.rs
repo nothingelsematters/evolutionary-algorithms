@@ -1,6 +1,7 @@
 use super::{MuPlusOne, Mutant};
 use std::collections::BinaryHeap;
 
+#[derive(Clone, Copy)]
 pub struct ConvexHullMaximization {
     mu: usize,
     crossover_probability: f64,
