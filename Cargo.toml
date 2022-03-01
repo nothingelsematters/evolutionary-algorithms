@@ -5,9 +5,14 @@ authors = ["Simon <Simon Naumov>"]
 edition = "2018"
 
 [dependencies]
+# common
+tokio = { version = "1.17.0", features = ["full"] }
+lazy_static = "1.4.0"
+
+# algorithm
 bit-vec = "0.6.3"
 rand = "0.8.4"
+
+# plot representation
 plotters = "0.3.1"
 plotly = "0.7.0"
-lazy_static = "1.4.0"
-tokio = { version = "1.17.0", features = ["full"] }

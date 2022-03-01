@@ -1,17 +1,17 @@
-use evolutionary_algorithms::algorithm::{mu_plus_one, mu_plus_one::MuPlusOne};
-use evolutionary_algorithms::draw;
-use evolutionary_algorithms::function::jump::Jump;
-use evolutionary_algorithms::function::Function;
-use evolutionary_algorithms::MAP;
-
-async fn run_task(i: i32, algorithm: mu_plus_one::ConvexHullMaximization, function: impl Function) {
-    println!("{}", i);
-    let algorithm = &algorithm as &dyn MuPlusOne;
-    algorithm.run(&function)
-}
+use evolutionary_algorithms::{
+    algorithm::{mu_plus_one, Algorithm},
+    draw,
+    function::{Function, Jump},
+    MAP,
+};
 
 #[tokio::main]
 async fn main() {
+    async fn run_task(i: i32, algorithm: impl Algorithm, function: impl Function) {
+        println!("{}", i);
+        algorithm.run(function)
+    }
+
     // constants
     let n = 512; // 32, 64, 128, 256, 512, 1024
     let k = 4; // 2, 4, 6
@@ -42,9 +42,8 @@ async fn main() {
     vec.sort_unstable();
 
     // saving results
-    println!("{:?}", vec);
     let title = format!(
-        "(μ + 1) chm common: μ = {}, p_c = {}, p_m = {} (1/n) on Jump({}, {}), {} runs",
+        "(μ + 1) chm: μ = {}, p_c = {}, p_m = {} (1/n) on Jump({}, {}), {} runs",
         mu, crossover_probability, mutation_rate, n, k, runs,
     );
     draw::save_plot(vec, &title, "1 positions for first max fitness").unwrap();

@@ -1,6 +1,14 @@
 use bit_vec::BitVec;
 
-use super::Function;
+pub trait Function {
+    fn n(&self) -> usize;
+
+    fn fitness(&self, bitvec: &BitVec) -> i64;
+
+    fn is_local_optimum(&self, bitvec: &BitVec) -> bool;
+
+    fn is_best(&self, bitvec: &BitVec) -> bool;
+}
 
 #[derive(Clone, Copy)]
 pub struct Jump {
@@ -15,6 +23,10 @@ impl Jump {
 }
 
 impl Function for Jump {
+    fn n(&self) -> usize {
+        self.n
+    }
+
     fn fitness(&self, bitvec: &BitVec) -> i64 {
         let ones = bitvec.iter().filter(|x| *x).count();
 
@@ -25,15 +37,11 @@ impl Function for Jump {
         }
     }
 
-    fn n(&self) -> usize {
-        self.n
-    }
-
-    fn is_best(&self) -> BitVec {
-        (0..self.n).map(|_| true).collect()
-    }
-
     fn is_local_optimum(&self, bitvec: &BitVec) -> bool {
         bitvec.iter().filter(|x| *x).count() == self.n - self.k
+    }
+
+    fn is_best(&self, bitvec: &BitVec) -> bool {
+        *bitvec == BitVec::from_elem(self.n, true)
     }
 }
