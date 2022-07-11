@@ -18,26 +18,29 @@ pub fn save_plot(
         .x_label_area_size(30)
         .y_label_area_size(30)
         .build_cartesian_2d(
-            result.iter().map(|(x, _)| x).min().unwrap() - 1
+            0 // result.iter().map(|(x, _)| x).min().unwrap() - 1
                 ..result.iter().map(|(x, _)| x).max().unwrap() + 1,
-            result.iter().map(|(_, y)| y).min().unwrap() - 1
+            0 // result.iter().map(|(x, y)| y - x).min().unwrap() - 1
                 ..result.iter().map(|(_, y)| y).max().unwrap() + 1,
         )?;
 
     chart.configure_mesh().draw()?;
 
     chart
-        .draw_series(LineSeries::new(result.iter().cloned(), &RED))?
+        .draw_series(LineSeries::new(
+            result.iter().cloned().map(|(x, y)| (x, y)),
+            &RED,
+        ))?
         .label(label)
         .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
 
-    chart
-        .draw_series(LineSeries::new(
-            result.into_iter().map(|(x, _)| (x, x)),
-            &BLACK,
-        ))?
-        .label("fitness")
-        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &BLACK));
+    // chart
+    //     .draw_series(LineSeries::new(
+    //         result.into_iter().map(|(x, _)| (x, x)),
+    //         &BLACK,
+    //     ))?
+    //     .label("fitness")
+    //     .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &BLACK));
 
     chart
         .configure_series_labels()

@@ -1,8 +1,8 @@
 use super::{crossover, mutate, Algorithm, Mutant};
-use crate::function::Function;
+use crate::{function::Function, COUNT, DRIFT};
 use bit_vec::BitVec;
 use rand::prelude::*;
-use std::collections::{BinaryHeap, HashSet};
+use std::collections::BinaryHeap;
 
 fn initialize(mu: usize, function: &dyn Function) -> BinaryHeap<Mutant> {
     let mut population = BinaryHeap::with_capacity(mu);
@@ -32,32 +32,39 @@ fn mu_plus_one<F>(
 {
     let mut population = initialize(mu, &function);
 
-    let mut set = HashSet::new();
+    // let mut bit_counts = vec![0usize; function.n()];
     loop {
         // Run analysis block
         {
-            let max_fitness = population.iter().map(|x| x.fitness).max().unwrap();
-
-            if !set.contains(&max_fitness) {
-                set.insert(max_fitness);
-
-                let mut guard = crate::MAP.lock().unwrap();
-                let entry = guard.entry(max_fitness).or_insert((0, 0));
-                let positions = population.iter().fold(
-                    BitVec::from_elem(function.n(), false),
-                    |result, mutant| {
-                        result
-                            .iter()
-                            .zip(mutant.bitvec.iter())
-                            .map(|(x, y)| x || y)
-                            .collect()
-                    },
-                );
-                *entry = (
-                    entry.0 + 1,
-                    entry.1 + positions.iter().filter(|x| *x).count(),
-                );
+            let mut new_bit_counts = vec![0usize; function.n()];
+            for mutant in population.iter() {
+                (0..function.n()).for_each(|i| {
+                    new_bit_counts[i] += if mutant.bitvec[i] { 1 } else { 0 };
+                });
             }
+
+            let mut count = COUNT.lock().unwrap();
+            // for i in new_bit_counts.iter() {
+            //     count[*i] += 1;
+            // }
+
+            let zero = new_bit_counts.iter().filter(|x| **x == 0).count();
+            let fitness = population
+                .iter()
+                .map(|x| function.fitness(&x.bitvec))
+                .max()
+                .unwrap();
+            count[fitness as usize] += 1;
+
+            // let mut drift = DRIFT.lock().unwrap();
+            // (0..mu).for_each(|i| {
+            //     drift[i] += new_bit_counts[i] as i64 - bit_counts[i] as i64;
+            // });
+
+            // bit_counts = new_bit_counts;
+            // if *count.iter().take(mu).min().unwrap() >= 1000 {
+            //     break;
+            // }
         }
 
         let p: f64 = rand::thread_rng().gen();
