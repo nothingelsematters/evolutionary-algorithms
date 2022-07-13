@@ -14,5 +14,6 @@ bit-vec = "0.6.3"
 rand = "0.8.4"
 
 # plot representation
-plotters = "0.3.1"
+plotters = "0.3.2"
 plotly = "0.7.0"
+image = "0.24.2"

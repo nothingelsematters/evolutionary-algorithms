@@ -1,70 +1,70 @@
-use plotly::box_plot::BoxMean;
-use plotly::common::{Orientation, Title};
-use plotly::layout::{Axis, BoxMode};
-use plotly::{BoxPlot, Layout, Plot};
-
+use image::codecs::gif::GifEncoder;
+use image::{Frame, ImageBuffer};
+use plotters::backend::BGRXPixel;
 use plotters::prelude::*;
+use std::fs::File;
+use std::ops::Range;
+use std::path::Path;
 
-pub fn save_plot(
+pub fn get_plot(
     result: Vec<(usize, usize)>,
+    x: Range<usize>,
+    y: Range<usize>,
     caption: &str,
     label: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let root = BitMapBackend::new("plots/plot.png", (640, 480)).into_drawing_area();
-    root.fill(&WHITE)?;
-    let mut chart = ChartBuilder::on(&root)
-        .caption(caption, ("sans-serif", 20).into_font())
-        .margin(5)
-        .x_label_area_size(30)
-        .y_label_area_size(30)
-        .build_cartesian_2d(
-            0 // result.iter().map(|(x, _)| x).min().unwrap() - 1
-                ..result.iter().map(|(x, _)| x).max().unwrap() + 1,
-            0 // result.iter().map(|(x, y)| y - x).min().unwrap() - 1
-                ..result.iter().map(|(_, y)| y).max().unwrap() + 1,
-        )?;
+    width: usize,
+    height: usize,
+) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    let mut data = vec![0u8; width * height * 4];
 
-    chart.configure_mesh().draw()?;
+    {
+        let root = BitMapBackend::<'_, BGRXPixel>::with_buffer_and_format(
+            &mut data,
+            (width as u32, height as u32),
+        )
+        .expect("")
+        .into_drawing_area();
+        root.fill(&WHITE)?;
 
-    chart
-        .draw_series(LineSeries::new(
-            result.iter().cloned().map(|(x, y)| (x, y)),
-            &RED,
-        ))?
-        .label(label)
-        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
+        let mut chart = ChartBuilder::on(&root)
+            .caption(caption, ("monospace", 15).into_font())
+            .margin(5)
+            .x_label_area_size(30)
+            .y_label_area_size(30)
+            .build_cartesian_2d(x, y)?;
 
-    // chart
-    //     .draw_series(LineSeries::new(
-    //         result.into_iter().map(|(x, _)| (x, x)),
-    //         &BLACK,
-    //     ))?
-    //     .label("fitness")
-    //     .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &BLACK));
+        chart.configure_mesh().draw()?;
 
-    chart
-        .configure_series_labels()
-        .background_style(&WHITE.mix(0.8))
-        .border_style(&BLACK)
-        .draw()?;
+        chart
+            .draw_series(LineSeries::new(result.into_iter(), &RED))?
+            .label(label)
+            .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
 
-    Ok(())
+        chart
+            .configure_series_labels()
+            .background_style(&WHITE.mix(0.8))
+            .border_style(&BLACK)
+            .draw()?;
+    }
+
+    Ok(data)
 }
 
-pub fn save_box_plot(title: &str, text: &str, file_path: &str, nums: Vec<usize>) {
-    let len = nums.len();
-    let trace = BoxPlot::new_xy(nums, vec![0; len])
-        .orientation(Orientation::Horizontal)
-        .box_mean(BoxMean::True);
+pub fn save_gif<P, I>(file_path: P, width: usize, height: usize, speed: i32, frame_iter: I)
+where
+    P: AsRef<Path>,
+    I: Iterator<Item = Vec<u8>>,
+{
+    let gif_file = File::create(&file_path).expect("animation file creation");
+    let mut gif_encoder = GifEncoder::new_with_speed(gif_file, speed);
 
-    let mut plot = Plot::new();
-    plot.add_trace(trace);
+    for (i, frame) in frame_iter.enumerate() {
+        println!("Adding frame #{}", i);
+        let plot =
+            ImageBuffer::from_raw(width as u32, height as u32, frame).expect("plot decoding");
 
-    let layout = Layout::new()
-        .title(Title::new(title))
-        .x_axis(Axis::new().title(Title::new(text)).zero_line(false))
-        .box_mode(BoxMode::Group);
-
-    plot.set_layout(layout);
-    plot.to_html(file_path)
+        gif_encoder
+            .encode_frame(Frame::new(plot))
+            .expect("plot into animation encoding");
+    }
 }

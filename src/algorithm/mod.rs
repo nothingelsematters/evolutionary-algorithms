@@ -1,16 +1,11 @@
 use crate::function::Function;
 use bit_vec::BitVec;
-use lazy_static::lazy_static;
 use rand::Rng;
-use std::{
-    cmp::Ordering,
-    sync::atomic::{AtomicUsize, Ordering as AtomicOrdering},
-};
 
 pub mod mu_plus_one;
 
 pub trait Algorithm {
-    fn run(&self, function: impl Function);
+    fn run(&self, function: &impl Function) -> Vec<Vec<BitVec>>;
 }
 
 fn mutate(bitvec: &BitVec, mutation_rate: f64) -> BitVec {
@@ -43,34 +38,10 @@ fn crossover(left: &BitVec, right: &BitVec, crossover_bias: f64) -> BitVec {
         .collect()
 }
 
-// a crutch for multi item heap
-lazy_static! {
-    static ref MUTANT_NUMBER: AtomicUsize = AtomicUsize::new(0);
-}
-
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
 struct Mutant {
     fitness: i64,
     bitvec: BitVec,
-    crutch: usize,
-}
-
-impl PartialOrd for Mutant {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        // a crutch for a min heap
-        let result = match self.fitness.cmp(&other.fitness) {
-            Ordering::Greater => Ordering::Less,
-            Ordering::Less => Ordering::Greater,
-            Ordering::Equal => (&self.bitvec, self.crutch).cmp(&(&other.bitvec, other.crutch)),
-        };
-        Some(result)
-    }
-}
-
-impl Ord for Mutant {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap()
-    }
 }
 
 impl Mutant {
@@ -78,7 +49,6 @@ impl Mutant {
         Mutant {
             fitness: function.fitness(&bitvec),
             bitvec,
-            crutch: MUTANT_NUMBER.fetch_add(1, AtomicOrdering::SeqCst),
         }
     }
 }
