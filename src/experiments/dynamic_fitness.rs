@@ -74,11 +74,13 @@ fn save_animation(n: usize, mu: usize) {
             .filter(|(i, _)| i % 60 == 0)
             .map(|(i, population_ones)| {
                 get_plot(
-                    population_ones.into_iter().enumerate().collect(),
+                    vec![(
+                        "fitness ones - fitness",
+                        population_ones.into_iter().enumerate().collect(),
+                    )],
                     0..n,
                     0..(y_max + 1),
                     &format!("{} on {}, #{:04}/{}", algorithm, function, i, total_len),
-                    "fitness ones - fitness",
                     WIDTH,
                     HEIGHT,
                 )
