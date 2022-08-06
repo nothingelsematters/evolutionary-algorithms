@@ -51,7 +51,7 @@ pub async fn runtime_experiment() {
         }
     }
 
-    let average_results = vec![
+    let mu_average_results = vec![
         (
             "2",
             vec![
@@ -107,13 +107,13 @@ pub async fn runtime_experiment() {
         ),
     ];
 
-    let y_min = average_results
+    let y_min = mu_average_results
         .iter()
         .map(|(_, vs)| vs.iter().map(|(_, x)| *x as u32).min().unwrap())
         .min()
         .unwrap();
 
-    let y_max = average_results
+    let y_max = mu_average_results
         .iter()
         .map(|(_, vs)| vs.iter().map(|(_, x)| *x as u32).max().unwrap())
         .max()
@@ -121,10 +121,75 @@ pub async fn runtime_experiment() {
 
     save_plot(
         "plots/runtime-one-max.png".to_owned(),
-        average_results,
+        mu_average_results,
         5.0..13.0,
         y_min as f64..y_max as f64,
-        "(μ + 1) w/ chm average runtimes: x = log2(n), y = avg / n",
+        "(μ + 1) w/ chm on OneMax average runtimes: x = log2(n), y = avg / n",
+        650,
+        500,
+    )
+    .unwrap();
+
+    let lo_average_results = vec![
+        (
+            "2",
+            vec![
+                (5.0, 887.171875 / 32.0),
+                (6.0, 3491.2890625 / 64.0),
+                (7.0, 13709.3671875 / 128.0),
+                (8.0, 56812.609375 / 256.0),
+                (9.0, 227244.953125 / 512.0),
+            ],
+        ),
+        (
+            "log2(x)",
+            vec![
+                (5.0, 991.6953125 / 32.0),
+                (6.0, 3728.9765625 / 64.0),
+                (7.0, 14999.75 / 128.0),
+                (8.0, 58397.75 / 256.0),
+                (9.0, 230779.1015625 / 512.0),
+            ],
+        ),
+        (
+            "sqrt(x)",
+            vec![
+                (5.0, 962.5625 / 32.0),
+                (6.0, 3969.7421875 / 64.0),
+                (7.0, 16289.7109375 / 128.0),
+                (8.0, 63167.9296875 / 256.0),
+                (9.0, 244931.359375 / 512.0),
+            ],
+        ),
+        (
+            "x / 4",
+            vec![
+                (5.0, 1062.4765625 / 32.0),
+                (6.0, 4810.8671875 / 64.0),
+                (7.0, 20875.0859375 / 128.0),
+                (8.0, 90339.9453125 / 256.0),
+            ],
+        ),
+    ];
+
+    let y_min = lo_average_results
+        .iter()
+        .map(|(_, vs)| vs.iter().map(|(_, x)| *x as u32).min().unwrap())
+        .min()
+        .unwrap();
+
+    let y_max = lo_average_results
+        .iter()
+        .map(|(_, vs)| vs.iter().map(|(_, x)| *x as u32).max().unwrap())
+        .max()
+        .unwrap();
+
+    save_plot(
+        "plots/runtime-leading-ones.png".to_owned(),
+        lo_average_results,
+        5.0..9.0,
+        y_min as f64..y_max as f64,
+        "(μ + 1) w/ chm on LeadingOnes average runtimes: x = log2(n), y = avg / n",
         650,
         500,
     )
