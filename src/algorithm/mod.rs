@@ -5,7 +5,40 @@ use rand::Rng;
 pub mod mu_plus_one;
 
 pub trait Algorithm {
-    fn run(&self, function: &impl Function) -> Vec<Vec<BitVec>>;
+    fn initialize(&self, function: &impl Function) -> Vec<Mutant>;
+
+    fn stopping_criterea(population: &[Mutant], function: &impl Function) -> bool {
+        population
+            .last()
+            .map(|x| function.is_best(&x.bitvec))
+            .unwrap_or(false)
+    }
+
+    fn iterate(&self, population: &mut Vec<Mutant>, function: &impl Function);
+
+    fn trace(&self, function: &impl Function) -> Vec<Vec<Mutant>> {
+        let mut population = self.initialize(function);
+        let mut trace = vec![population.clone()];
+
+        while !Self::stopping_criterea(&population, function) {
+            self.iterate(&mut population, function);
+            trace.push(population.clone());
+        }
+
+        trace
+    }
+
+    fn runtime(&self, function: &impl Function) -> usize {
+        let mut population = self.initialize(function);
+        let mut trace = 0;
+
+        while !Self::stopping_criterea(&population, function) {
+            self.iterate(&mut population, function);
+            trace += 1;
+        }
+
+        trace
+    }
 }
 
 fn mutate(bitvec: &BitVec, mutation_rate: f64) -> BitVec {
@@ -38,10 +71,10 @@ fn crossover(left: &BitVec, right: &BitVec, crossover_bias: f64) -> BitVec {
         .collect()
 }
 
-#[derive(PartialEq, Eq, PartialOrd, Ord)]
-struct Mutant {
-    fitness: i64,
-    bitvec: BitVec,
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Mutant {
+    pub fitness: i64,
+    pub bitvec: BitVec,
 }
 
 impl Mutant {

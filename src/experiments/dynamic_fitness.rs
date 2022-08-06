@@ -16,7 +16,7 @@ where
     F: Function + Display,
 {
     let n = function.n();
-    let populations = algorithm.run(function);
+    let populations = algorithm.trace(function);
 
     populations
         .into_iter()
@@ -24,8 +24,7 @@ where
             let mut fitness_ones = vec![BitVec::from_elem(n, false); n + 1];
 
             for i in population {
-                let fitness = function.fitness(&i) as usize;
-                fitness_ones[fitness].or(&i);
+                fitness_ones[i.fitness as usize].or(&i.bitvec);
             }
 
             fitness_ones
@@ -76,10 +75,14 @@ fn save_animation(n: usize, mu: usize) {
                 get_plot(
                     vec![(
                         "fitness ones - fitness",
-                        population_ones.into_iter().enumerate().collect(),
+                        population_ones
+                            .into_iter()
+                            .enumerate()
+                            .map(|(x, y)| (x as f64, y as f64))
+                            .collect(),
                     )],
-                    0..n,
-                    0..(y_max + 1),
+                    0.0..n as f64,
+                    0.0..(y_max + 1) as f64,
                     &format!("{} on {}, #{:04}/{}", algorithm, function, i, total_len),
                     WIDTH,
                     HEIGHT,

@@ -19,10 +19,14 @@ impl Function for LeadingOnes {
     }
 
     fn fitness(&self, bitvec: &BitVec) -> i64 {
-        bitvec
-            .iter()
-            .position(|x| !x)
-            .unwrap_or_else(|| bitvec.len()) as i64
+        if self.n <= u32::BITS as usize {
+            bitvec.storage()[0].leading_ones() as i64
+        } else {
+            bitvec
+                .iter()
+                .position(|x| !x)
+                .unwrap_or_else(|| bitvec.len()) as i64
+        }
     }
 
     fn is_local_optimum(&self, _bitvec: &BitVec) -> bool {

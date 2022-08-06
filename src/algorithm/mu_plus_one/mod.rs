@@ -26,37 +26,25 @@ fn get_random(mutants: &[Mutant]) -> &BitVec {
     &mutants[i].bitvec
 }
 
-fn mu_plus_one<F>(
-    mu: usize,
+fn mu_plus_one_iterate<F>(
     crossover_probability: f64,
     mutation_rate: f64,
     function: &impl Function,
+    population: &mut Vec<Mutant>,
     break_ties: F,
-) -> Vec<Vec<BitVec>>
-where
+) where
     F: Fn(usize, &mut Vec<Mutant>),
 {
-    let mut population = initialize(mu, function);
-    let mut trace = Vec::new();
+    let p: f64 = rand::thread_rng().gen();
+    let x = get_random(population);
 
-    loop {
-        trace.push(population.iter().map(|x| x.bitvec.clone()).collect());
+    let z = if p <= crossover_probability {
+        let y = get_random(population);
+        mutate(&crossover(x, y, 0.5), mutation_rate)
+    } else {
+        mutate(x, mutation_rate)
+    };
 
-        let p: f64 = rand::thread_rng().gen();
-        let x = get_random(&population);
-
-        let z = if p <= crossover_probability {
-            let y = get_random(&population);
-            mutate(&crossover(x, y, 0.5), mutation_rate)
-        } else {
-            mutate(x, mutation_rate)
-        };
-
-        if function.is_best(&z) {
-            break trace;
-        }
-
-        population.push(Mutant::new(z, function));
-        break_ties(function.n(), &mut population);
-    }
+    population.push(Mutant::new(z, function));
+    break_ties(function.n(), population);
 }

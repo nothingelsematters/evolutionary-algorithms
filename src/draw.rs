@@ -9,9 +9,9 @@ use std::path::Path;
 
 fn draw_plot<DB>(
     root: DrawingArea<DB, Shift>,
-    results: Vec<(&str, Vec<(usize, usize)>)>,
-    x: Range<usize>,
-    y: Range<usize>,
+    results: Vec<(&str, Vec<(f64, f64)>)>,
+    x: Range<f64>,
+    y: Range<f64>,
     caption: &str,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -48,9 +48,9 @@ where
 }
 
 pub fn get_plot(
-    results: Vec<(&str, Vec<(usize, usize)>)>,
-    x: Range<usize>,
-    y: Range<usize>,
+    results: Vec<(&str, Vec<(f64, f64)>)>,
+    x: Range<f64>,
+    y: Range<f64>,
     caption: &str,
     width: usize,
     height: usize,
@@ -72,9 +72,9 @@ pub fn get_plot(
 
 pub fn save_plot(
     file_name: String,
-    results: Vec<(&str, Vec<(usize, usize)>)>,
-    x: Range<usize>,
-    y: Range<usize>,
+    results: Vec<(&str, Vec<(f64, f64)>)>,
+    x: Range<f64>,
+    y: Range<f64>,
     caption: &str,
     width: usize,
     height: usize,

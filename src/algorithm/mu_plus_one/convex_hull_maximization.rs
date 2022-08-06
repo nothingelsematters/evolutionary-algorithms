@@ -1,4 +1,3 @@
-use super::mu_plus_one;
 use crate::{
     algorithm::{Algorithm, Mutant},
     function::Function,
@@ -24,12 +23,16 @@ impl Display for ConvexHullMaximization {
 }
 
 impl Algorithm for ConvexHullMaximization {
-    fn run(&self, function: &impl Function) -> Vec<Vec<BitVec>> {
-        mu_plus_one(
-            self.mu,
+    fn initialize(&self, function: &impl Function) -> Vec<Mutant> {
+        super::initialize(self.mu, function)
+    }
+
+    fn iterate(&self, population: &mut Vec<Mutant>, function: &impl Function) {
+        super::mu_plus_one_iterate(
             self.crossover_probability,
             self.mutation_rate,
             function,
+            population,
             ConvexHullMaximization::break_ties,
         )
     }
@@ -48,43 +51,44 @@ impl ConvexHullMaximization {
         }
     }
 
-    fn different_ones(bitvec: &BitVec, current_different_ones: Vec<u8>) -> Vec<u8> {
-        bitvec
-            .iter()
-            .zip(current_different_ones)
-            .map(|(bit, value)| value | (if bit { 0b10 } else { 0b1 }))
-            .collect()
+    fn different_ones(bitvec: &BitVec, current_different_ones: &mut [u8]) {
+        current_different_ones
+            .iter_mut()
+            .zip(bitvec)
+            .for_each(|(value, bit)| *value |= if bit { 0b10 } else { 0b01 })
     }
 
     fn break_ties(n: usize, population: &mut Vec<Mutant>) {
         let lowest_fitness = population.iter().map(|x| x.fitness).min().unwrap();
-        let mut choosing = Vec::new();
+        let choosing: Vec<_> = population
+            .iter()
+            .enumerate()
+            .filter(|(_, x)| x.fitness == lowest_fitness)
+            .map(|(i, _)| i)
+            .collect();
 
-        let mut i = 0;
-        while i < population.len() {
-            if population[i].fitness == lowest_fitness {
-                choosing.push(population.remove(i));
-            }
-            i += 1;
-        }
-
-        let different_ones = population.iter().fold(vec![0u8; n], |init, m| {
-            ConvexHullMaximization::different_ones(&m.bitvec, init)
-        });
+        let different_ones = population
+            .iter()
+            .filter(|x| x.fitness != lowest_fitness)
+            .fold(vec![0u8; n], |mut init, m| {
+                ConvexHullMaximization::different_ones(&m.bitvec, &mut init);
+                init
+            });
 
         let i_terminated = (0..choosing.len())
             .map(|i| {
                 let mut different_ones = different_ones.clone();
 
-                for choosing_j in choosing
+                choosing
                     .iter()
                     .enumerate()
                     .filter(|(j, _)| i != *j)
-                    .map(|(_, x)| x)
-                {
-                    different_ones =
-                        ConvexHullMaximization::different_ones(&choosing_j.bitvec, different_ones);
-                }
+                    .for_each(|(_, choosing_j)| {
+                        ConvexHullMaximization::different_ones(
+                            &population[*choosing_j].bitvec,
+                            &mut different_ones,
+                        );
+                    });
 
                 let value: usize = different_ones
                     .iter()
@@ -94,16 +98,13 @@ impl ConvexHullMaximization {
                         _ => panic!(),
                     })
                     .sum();
-                (i, value)
+
+                (choosing[i], value)
             })
             .min_by(|(_, x_value), (_, y_value)| x_value.cmp(y_value))
-            .unwrap()
-            .0;
+            .map(|(i, _)| i)
+            .unwrap();
 
-        for (i, mutant) in choosing.into_iter().enumerate() {
-            if i != i_terminated {
-                population.push(mutant);
-            }
-        }
+        population.remove(i_terminated);
     }
 }

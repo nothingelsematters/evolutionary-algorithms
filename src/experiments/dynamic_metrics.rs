@@ -1,3 +1,5 @@
+use bit_vec::BitVec;
+
 use crate::{
     algorithm::{self, Algorithm},
     draw::save_plot,
@@ -14,42 +16,34 @@ where
     A: Algorithm + Display,
     F: Function + Display,
 {
-    let populations = algorithm.run(function);
+    let populations = algorithm.trace(function);
 
     populations
         .into_iter()
         .map(|population| {
-            let max_fitness = population
-                .iter()
-                .map(|x| function.fitness(x))
-                .max()
-                .unwrap();
+            let max_fitness = population.iter().map(|x| x.fitness).max().unwrap();
 
             let best_individuals_ones = {
                 let or = population
                     .iter()
-                    .filter(|x| function.fitness(*x) == max_fitness)
+                    .filter(|x| x.fitness == max_fitness)
                     .cloned()
-                    .reduce(|a, b| {
-                        let mut mutable = a;
-                        mutable.or(&b);
-                        mutable
-                    })
-                    .unwrap();
+                    .fold(BitVec::from_elem(function.n(), false), |mut init, x| {
+                        init.or(&x.bitvec);
+                        init
+                    });
 
                 ones(&or)
             };
 
             let all_ones = {
-                let or = population
-                    .iter()
-                    .cloned()
-                    .reduce(|a, b| {
-                        let mut mutable = a;
-                        mutable.or(&b);
-                        mutable
-                    })
-                    .unwrap();
+                let or = population.iter().cloned().fold(
+                    BitVec::from_elem(function.n(), false),
+                    |mut init, x| {
+                        init.or(&x.bitvec);
+                        init
+                    },
+                );
 
                 ones(&or)
             };
@@ -71,15 +65,27 @@ fn save_metrics_plot(n: usize, mu: usize) {
     let metrics = vec![
         (
             "max fitness",
-            metrics.iter().enumerate().map(|(i, x)| (i, x.0)).collect(),
+            metrics
+                .iter()
+                .enumerate()
+                .map(|(i, x)| (i as f64, x.0 as f64))
+                .collect(),
         ),
         (
             "best ones",
-            metrics.iter().enumerate().map(|(i, x)| (i, x.1)).collect(),
+            metrics
+                .iter()
+                .enumerate()
+                .map(|(i, x)| (i as f64, x.1 as f64))
+                .collect(),
         ),
         (
             "all ones",
-            metrics.iter().enumerate().map(|(i, x)| (i, x.2)).collect(),
+            metrics
+                .iter()
+                .enumerate()
+                .map(|(i, x)| (i as f64, x.2 as f64))
+                .collect(),
         ),
     ];
 
@@ -89,8 +95,8 @@ fn save_metrics_plot(n: usize, mu: usize) {
     save_plot(
         path,
         metrics,
-        0..iterations,
-        0..n,
+        0.0..iterations as f64,
+        0.0..n as f64,
         &format!("{} on {}", algorithm, function),
         WIDTH,
         HEIGHT,

@@ -1,6 +1,7 @@
-use super::mu_plus_one;
-use crate::{algorithm::Algorithm, function::Function};
-use bit_vec::BitVec;
+use crate::{
+    algorithm::{Algorithm, Mutant},
+    function::Function,
+};
 use std::fmt::Display;
 
 #[derive(Debug, Copy, Clone)]
@@ -31,14 +32,24 @@ impl Display for Common {
 }
 
 impl Algorithm for Common {
-    fn run(&self, function: &impl Function) -> Vec<Vec<BitVec>> {
-        mu_plus_one(
-            self.mu,
+    fn initialize(&self, function: &impl Function) -> Vec<Mutant> {
+        super::initialize(self.mu, function)
+    }
+
+    fn iterate(&self, population: &mut Vec<Mutant>, function: &impl Function) {
+        super::mu_plus_one_iterate(
             self.crossover_probability,
             self.mutation_rate,
             function,
+            population,
             |_n, population| {
-                population.pop();
+                let index = population
+                    .iter()
+                    .enumerate()
+                    .min_by_key(|(_, x)| x.fitness)
+                    .unwrap()
+                    .0;
+                population.remove(index);
             },
         )
     }
