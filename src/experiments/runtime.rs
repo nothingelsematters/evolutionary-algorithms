@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::{io::Write, time::Instant};
 
 use crate::{
@@ -6,18 +7,23 @@ use crate::{
     function::{self, Function},
 };
 
+pub async fn runtime_experiment() {
+    // run().await;
+    draw().await;
+}
+
 async fn run_task(i: i32, algorithm: impl Algorithm, function: impl Function) -> usize {
     print!("{} ", i);
     std::io::stdout().flush().expect("stdout flush");
     algorithm.runtime(&function)
 }
 
-pub async fn runtime_experiment() {
+async fn run() {
     let mu_getters: Vec<Box<dyn Fn(usize) -> usize>> = vec![
-        // Box::new(|_: usize| 2),
-        // Box::new(|x: usize| (x as f64).log2() as usize),
-        // Box::new(|x: usize| (x as f64).sqrt() as usize),
-        // Box::new(|x: usize| ((x as f64) / 4.0).ceil() as usize),
+        Box::new(|_: usize| 2),
+        Box::new(|x: usize| (x as f64).log2() as usize),
+        Box::new(|x: usize| (x as f64).sqrt() as usize),
+        Box::new(|x: usize| ((x as f64) / 4.0).ceil() as usize),
     ];
 
     for mu_getter in mu_getters {
@@ -49,7 +55,9 @@ pub async fn runtime_experiment() {
             println!("Evaluated in {:.2?}\n", elapsed);
         }
     }
+}
 
+async fn draw() {
     let mu_average_results = vec![
         (
             "2",
@@ -122,7 +130,7 @@ pub async fn runtime_experiment() {
         .unwrap();
 
     save_plot(
-        "plots/runtime-common-one-max.png".to_owned(),
+        "plots/runtime/common-one-max.png".to_owned(),
         mu_average_results,
         5.0..13.0,
         y_min as f64..y_max as f64,
@@ -192,7 +200,7 @@ pub async fn runtime_experiment() {
         .unwrap();
 
     save_plot(
-        "plots/runtime-common-leading-ones.png".to_owned(),
+        "plots/runtime/common-leading-ones.png".to_owned(),
         lo_average_results,
         5.0..9.0,
         y_min as f64..y_max as f64,

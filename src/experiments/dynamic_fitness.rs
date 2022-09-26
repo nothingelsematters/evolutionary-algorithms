@@ -54,7 +54,7 @@ fn save_animation(n: usize, mu: usize) {
         population_ones_vec.len(),
     );
 
-    let gif_path = format!("plots/dynamic-fitness-{}-{}-speed-up.gif", n, mu);
+    let gif_path = format!("plots/dynamic-fitness/{}-{}-speed-up.gif", n, mu,);
     let total_len = population_ones_vec.len();
     let y_max = *population_ones_vec
         .iter()

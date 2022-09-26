@@ -89,7 +89,7 @@ fn save_metrics_plot(n: usize, mu: usize) {
         ),
     ];
 
-    let path = format!("plots/dynamic-metrics-{}-{}.png", n, mu);
+    let path = format!("plots/dynamic-metrics/{}-{}.png", n, mu);
     println!("Saving plot: {}", path);
 
     save_plot(
