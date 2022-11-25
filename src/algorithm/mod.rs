@@ -6,6 +6,8 @@ pub mod launch;
 pub mod mu_plus_one;
 pub mod one_plus_lambda_lambda;
 
+pub use one_plus_lambda_lambda::OnePlusLambdaLambda;
+
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Mutant {
     pub bitvec: BitVec,

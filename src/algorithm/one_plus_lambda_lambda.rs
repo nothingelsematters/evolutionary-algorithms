@@ -1,12 +1,15 @@
 use std::fmt::Display;
 
+use probability::{distribution, prelude::Inverse};
 use rand::seq::IteratorRandom;
 
 use super::{crossover, initialize_random, Algorithm, Mutant};
 use crate::function::Function;
 
+#[derive(Debug, Copy, Clone)]
 pub struct OnePlusLambdaLambda {
     lambda: usize,
+    mutation_rate: f64,
     crossover_bias: f64,
 }
 
@@ -20,6 +23,16 @@ impl Display for OnePlusLambdaLambda {
     }
 }
 
+impl OnePlusLambdaLambda {
+    pub fn new(lambda: usize, mutation_rate: f64, crossover_bias: f64) -> OnePlusLambdaLambda {
+        OnePlusLambdaLambda {
+            lambda,
+            mutation_rate,
+            crossover_bias,
+        }
+    }
+}
+
 impl Algorithm for OnePlusLambdaLambda {
     fn initialize<F: Function>(&self, function: &F) -> Vec<Mutant> {
         initialize_random(1, function)
@@ -30,7 +43,8 @@ impl Algorithm for OnePlusLambdaLambda {
 
         // mutation phase
 
-        let l = 1; // TODO
+        let l =
+            distribution::Binomial::new(function.n(), self.mutation_rate).inverse(rand::random());
 
         let x_dash = (0..self.lambda)
             .map(|_| {
