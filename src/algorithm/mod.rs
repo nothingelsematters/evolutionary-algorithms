@@ -2,43 +2,43 @@ use crate::function::Function;
 use bit_vec::BitVec;
 use rand::Rng;
 
+pub mod launch;
 pub mod mu_plus_one;
+pub mod one_plus_lambda_lambda;
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Mutant {
+    pub bitvec: BitVec,
+    pub fitness: i64,
+}
+
+impl Mutant {
+    fn new<F: Function>(bitvec: BitVec, function: &F) -> Mutant {
+        Mutant {
+            fitness: function.fitness(&bitvec),
+            bitvec,
+        }
+    }
+}
 
 pub trait Algorithm {
-    fn initialize(&self, function: &impl Function) -> Vec<Mutant>;
+    fn initialize<F: Function>(&self, function: &F) -> Vec<Mutant>;
 
-    fn stopping_criterea(population: &[Mutant], function: &impl Function) -> bool {
-        population
-            .last()
-            .map(|x| function.is_best(&x.bitvec))
-            .unwrap_or(false)
+    fn iterate<F: Function>(&self, population: &mut Vec<Mutant>, function: &F);
+
+    fn stopping_criterea<F: Function>(population: &[Mutant], function: &F) -> bool {
+        let best_fitness = function.best_fitness();
+        population.iter().any(|x| x.fitness == best_fitness)
     }
+}
 
-    fn iterate(&self, population: &mut Vec<Mutant>, function: &impl Function);
-
-    fn trace(&self, function: &impl Function) -> Vec<Vec<Mutant>> {
-        let mut population = self.initialize(function);
-        let mut trace = vec![population.clone()];
-
-        while !Self::stopping_criterea(&population, function) {
-            self.iterate(&mut population, function);
-            trace.push(population.clone());
-        }
-
-        trace
-    }
-
-    fn runtime(&self, function: &impl Function) -> usize {
-        let mut population = self.initialize(function);
-        let mut trace = 0;
-
-        while !Self::stopping_criterea(&population, function) {
-            self.iterate(&mut population, function);
-            trace += 1;
-        }
-
-        trace
-    }
+pub fn initialize_random<F: Function>(population_size: usize, function: &F) -> Vec<Mutant> {
+    (0..population_size)
+        .map(|_| {
+            let bitvec = (0..function.n()).map(|_| rand::random()).collect();
+            Mutant::new(bitvec, function)
+        })
+        .collect()
 }
 
 fn mutate(bitvec: &BitVec, mutation_rate: f64) -> BitVec {
@@ -62,26 +62,11 @@ fn crossover(left: &BitVec, right: &BitVec, crossover_bias: f64) -> BitVec {
     left.iter()
         .zip(right)
         .map(|(x, y)| {
-            if rng.gen::<f64>() > crossover_bias {
+            if rng.gen::<f64>() <= crossover_bias {
                 x
             } else {
                 y
             }
         })
         .collect()
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Mutant {
-    pub fitness: i64,
-    pub bitvec: BitVec,
-}
-
-impl Mutant {
-    fn new(bitvec: BitVec, function: &dyn Function) -> Mutant {
-        Mutant {
-            fitness: function.fitness(&bitvec),
-            bitvec,
-        }
-    }
 }

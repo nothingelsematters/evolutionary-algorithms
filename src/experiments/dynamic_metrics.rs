@@ -1,7 +1,7 @@
 use bit_vec::BitVec;
 
 use crate::{
-    algorithm::{self, Algorithm},
+    algorithm::{self, launch::trace, Algorithm},
     draw::save_plot,
     function::{self, Function},
     utils::ones,
@@ -16,7 +16,7 @@ where
     A: Algorithm + Display,
     F: Function + Display,
 {
-    let populations = algorithm.trace(function);
+    let populations = trace(algorithm, function);
 
     populations
         .into_iter()

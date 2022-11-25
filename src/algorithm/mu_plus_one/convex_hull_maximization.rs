@@ -1,5 +1,5 @@
 use crate::{
-    algorithm::{Algorithm, Mutant},
+    algorithm::{initialize_random, Algorithm, Mutant},
     function::Function,
 };
 use bit_vec::BitVec;
@@ -23,11 +23,11 @@ impl Display for ConvexHullMaximization {
 }
 
 impl Algorithm for ConvexHullMaximization {
-    fn initialize(&self, function: &impl Function) -> Vec<Mutant> {
-        super::initialize(self.mu, function)
+    fn initialize<F: Function>(&self, function: &F) -> Vec<Mutant> {
+        initialize_random(self.mu, function)
     }
 
-    fn iterate(&self, population: &mut Vec<Mutant>, function: &impl Function) {
+    fn iterate<F: Function>(&self, population: &mut Vec<Mutant>, function: &F) {
         super::mu_plus_one_iterate(
             self.crossover_probability,
             self.mutation_rate,
@@ -101,7 +101,7 @@ impl ConvexHullMaximization {
 
                 (choosing[i], value)
             })
-            .min_by(|(_, x_value), (_, y_value)| x_value.cmp(y_value))
+            .max_by_key(|(_, value)| *value)
             .map(|(i, _)| i)
             .unwrap();
 

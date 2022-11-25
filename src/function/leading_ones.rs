@@ -13,6 +13,12 @@ impl LeadingOnes {
     }
 }
 
+impl Display for LeadingOnes {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "LeadingOnes(n = {})", self.n)
+    }
+}
+
 impl Function for LeadingOnes {
     fn n(&self) -> usize {
         self.n
@@ -29,17 +35,7 @@ impl Function for LeadingOnes {
         }
     }
 
-    fn is_local_optimum(&self, _bitvec: &BitVec) -> bool {
-        false
-    }
-
-    fn is_best(&self, bitvec: &BitVec) -> bool {
-        bitvec.all()
-    }
-}
-
-impl Display for LeadingOnes {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "LeadingOnes(n = {})", self.n)
+    fn best_fitness(&self) -> i64 {
+        self.n as i64
     }
 }

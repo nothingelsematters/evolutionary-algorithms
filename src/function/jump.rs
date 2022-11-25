@@ -15,6 +15,12 @@ impl Jump {
     }
 }
 
+impl Display for Jump {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Jump(n = {}, k = {})", self.n, self.k)
+    }
+}
+
 impl Function for Jump {
     fn n(&self) -> usize {
         self.n
@@ -30,17 +36,7 @@ impl Function for Jump {
         }
     }
 
-    fn is_local_optimum(&self, bitvec: &BitVec) -> bool {
-        ones(bitvec) == self.n - self.k
-    }
-
-    fn is_best(&self, bitvec: &BitVec) -> bool {
-        *bitvec == BitVec::from_elem(self.n, true)
-    }
-}
-
-impl Display for Jump {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Jump(n = {}, k = {})", self.n, self.k)
+    fn best_fitness(&self) -> i64 {
+        self.n as i64
     }
 }

@@ -1,5 +1,5 @@
 use crate::{
-    algorithm::{Algorithm, Mutant},
+    algorithm::{initialize_random, Algorithm, Mutant},
     function::Function,
 };
 use std::fmt::Display;
@@ -32,11 +32,11 @@ impl Display for Common {
 }
 
 impl Algorithm for Common {
-    fn initialize(&self, function: &impl Function) -> Vec<Mutant> {
-        super::initialize(self.mu, function)
+    fn initialize<F: Function>(&self, function: &F) -> Vec<Mutant> {
+        initialize_random(self.mu, function)
     }
 
-    fn iterate(&self, population: &mut Vec<Mutant>, function: &impl Function) {
+    fn iterate<F: Function>(&self, population: &mut Vec<Mutant>, function: &F) {
         super::mu_plus_one_iterate(
             self.crossover_probability,
             self.mutation_rate,

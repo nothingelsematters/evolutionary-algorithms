@@ -14,6 +14,12 @@ impl RuggedOneMax {
     }
 }
 
+impl Display for RuggedOneMax {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "RuggedOneMax(n = {})", self.n)
+    }
+}
+
 impl Function for RuggedOneMax {
     fn n(&self) -> usize {
         self.n
@@ -28,17 +34,7 @@ impl Function for RuggedOneMax {
         }
     }
 
-    fn is_local_optimum(&self, _bitvec: &BitVec) -> bool {
-        false
-    }
-
-    fn is_best(&self, bitvec: &BitVec) -> bool {
-        bitvec.all()
-    }
-}
-
-impl Display for RuggedOneMax {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "RuggedOneMax(n = {})", self.n)
+    fn best_fitness(&self) -> i64 {
+        (self.n + 1) as i64
     }
 }

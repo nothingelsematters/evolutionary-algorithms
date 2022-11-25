@@ -15,7 +15,5 @@ pub trait Function {
 
     fn fitness(&self, bitvec: &BitVec) -> i64;
 
-    fn is_local_optimum(&self, bitvec: &BitVec) -> bool;
-
-    fn is_best(&self, bitvec: &BitVec) -> bool;
+    fn best_fitness(&self) -> i64;
 }

@@ -9,33 +9,24 @@ mod convex_hull_maximization;
 pub use common::Common;
 pub use convex_hull_maximization::ConvexHullMaximization;
 
-fn initialize(mu: usize, function: &dyn Function) -> Vec<Mutant> {
-    let mut population = Vec::with_capacity(mu);
-
-    let n = function.n();
-    for _ in 0..mu {
-        let bitvec = (0..n).map(|_| rand::random()).collect();
-        population.push(Mutant::new(bitvec, function));
-    }
-
-    population
-}
-
 fn get_random(mutants: &[Mutant]) -> &BitVec {
-    let i = rand::random::<usize>() % mutants.len();
-    &mutants[i].bitvec
+    &mutants
+        .choose(&mut rand::thread_rng())
+        .expect("non-empty population")
+        .bitvec
 }
 
-fn mu_plus_one_iterate<F>(
+fn mu_plus_one_iterate<F, BT>(
     crossover_probability: f64,
     mutation_rate: f64,
-    function: &impl Function,
+    function: &F,
     population: &mut Vec<Mutant>,
-    break_ties: F,
+    break_ties: BT,
 ) where
-    F: Fn(usize, &mut Vec<Mutant>),
+    F: Function,
+    BT: Fn(usize, &mut Vec<Mutant>),
 {
-    let p: f64 = rand::thread_rng().gen();
+    let p: f64 = rand::random();
     let x = get_random(population);
 
     let z = if p <= crossover_probability {

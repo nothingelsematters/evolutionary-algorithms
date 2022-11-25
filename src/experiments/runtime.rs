@@ -2,7 +2,7 @@
 use std::{io::Write, time::Instant};
 
 use crate::{
-    algorithm::{self, Algorithm},
+    algorithm::{self, launch::runtime, Algorithm},
     draw::save_plot,
     function::{self, Function},
 };
@@ -12,10 +12,14 @@ pub async fn runtime_experiment() {
     draw().await;
 }
 
-async fn run_task(i: i32, algorithm: impl Algorithm, function: impl Function) -> usize {
+async fn run_task<A, F>(i: i32, algorithm: A, function: F) -> usize
+where
+    A: Algorithm + Send,
+    F: Function + Send,
+{
     print!("{} ", i);
     std::io::stdout().flush().expect("stdout flush");
-    algorithm.runtime(&function)
+    runtime(&algorithm, &function)
 }
 
 async fn run() {

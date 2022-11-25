@@ -14,6 +14,12 @@ impl OneMax {
     }
 }
 
+impl Display for OneMax {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "OneMax(n = {})", self.n)
+    }
+}
+
 impl Function for OneMax {
     fn n(&self) -> usize {
         self.n
@@ -23,17 +29,7 @@ impl Function for OneMax {
         ones(bitvec) as i64
     }
 
-    fn is_local_optimum(&self, _bitvec: &BitVec) -> bool {
-        false
-    }
-
-    fn is_best(&self, bitvec: &BitVec) -> bool {
-        bitvec.all()
-    }
-}
-
-impl Display for OneMax {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "OneMax(n = {})", self.n)
+    fn best_fitness(&self) -> i64 {
+        self.n as i64
     }
 }
