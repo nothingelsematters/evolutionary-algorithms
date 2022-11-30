@@ -1,5 +1,5 @@
 use crate::{
-    algorithm::{self, launch::trace, Algorithm},
+    algorithm::{self, launch::get_trace, Algorithm},
     draw::{get_plot, save_gif},
     function::{self, Function},
     utils::ones,
@@ -16,7 +16,7 @@ where
     F: Function + Display,
 {
     let n = function.n();
-    let populations = trace(algorithm, function);
+    let populations = get_trace(algorithm, function);
 
     populations
         .into_iter()

@@ -32,6 +32,8 @@ pub trait Algorithm {
         let best_fitness = function.best_fitness();
         population.iter().any(|x| x.fitness == best_fitness)
     }
+
+    fn fitness_evaluations(&self, iterations: usize) -> usize;
 }
 
 pub fn initialize_random<F: Function>(population_size: usize, function: &F) -> Vec<Mutant> {

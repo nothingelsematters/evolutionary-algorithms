@@ -38,6 +38,10 @@ impl Algorithm for OnePlusLambdaLambda {
         initialize_random(1, function)
     }
 
+    fn fitness_evaluations(&self, iterations: usize) -> usize {
+        iterations * 2 * self.lambda
+    }
+
     fn iterate<F: Function>(&self, population: &mut Vec<Mutant>, function: &F) {
         let x = population.first().unwrap();
 
@@ -48,14 +52,14 @@ impl Algorithm for OnePlusLambdaLambda {
 
         let x_dash = (0..self.lambda)
             .map(|_| {
-                let mut x_dash = x.clone();
+                let mut x_dash_bitvec = x.bitvec.clone();
                 let indices = (0..x.bitvec.len()).choose_multiple(&mut rand::thread_rng(), l);
 
                 for i in indices {
-                    x_dash.bitvec.set(i, !x_dash.bitvec[i]);
+                    x_dash_bitvec.set(i, !x_dash_bitvec[i]);
                 }
 
-                x_dash
+                Mutant::new(x_dash_bitvec, function)
             })
             .max_by_key(|x_dash| x_dash.fitness)
             .unwrap();

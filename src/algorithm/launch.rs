@@ -2,8 +2,7 @@ use crate::function::Function;
 
 use super::{Algorithm, Mutant};
 
-/// Returns every population.
-pub fn trace<A, F>(algorithm: &A, function: &F) -> Vec<Vec<Mutant>>
+pub fn get_trace<A, F>(algorithm: &A, function: &F) -> Vec<Vec<Mutant>>
 where
     A: Algorithm,
     F: Function,
@@ -19,19 +18,26 @@ where
     trace
 }
 
-/// Returns number of iterations.
-pub fn runtime<A, F>(algorithm: &A, function: &F) -> usize
+pub fn get_iterations<A, F>(algorithm: &A, function: &F) -> usize
 where
     A: Algorithm,
     F: Function,
 {
     let mut population = algorithm.initialize(function);
-    let mut trace = 0;
+    let mut iterations = 0;
 
     while !A::stopping_criterea(&population, function) {
         algorithm.iterate(&mut population, function);
-        trace += 1;
+        iterations += 1;
     }
 
-    trace
+    iterations
+}
+
+pub fn get_fitness_evaluations<A, F>(algorithm: &A, function: &F) -> usize
+where
+    A: Algorithm,
+    F: Function,
+{
+    algorithm.fitness_evaluations(get_iterations(algorithm, function))
 }

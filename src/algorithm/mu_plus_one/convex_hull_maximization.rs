@@ -27,6 +27,10 @@ impl Algorithm for ConvexHullMaximization {
         initialize_random(self.mu, function)
     }
 
+    fn fitness_evaluations(&self, iterations: usize) -> usize {
+        iterations + self.mu
+    }
+
     fn iterate<F: Function>(&self, population: &mut Vec<Mutant>, function: &F) {
         super::mu_plus_one_iterate(
             self.crossover_probability,

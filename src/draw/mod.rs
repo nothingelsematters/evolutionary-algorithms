@@ -7,6 +7,8 @@ use std::fs::File;
 use std::ops::Range;
 use std::path::Path;
 
+pub mod utils;
+
 fn draw_plot<DB>(
     root: DrawingArea<DB, Shift>,
     results: Vec<(&str, Vec<(f64, f64)>)>,
@@ -33,15 +35,15 @@ where
 
     for ((label, result), color) in results.into_iter().zip(colors.into_iter()) {
         chart
-            .draw_series(LineSeries::new(result.into_iter(), &color))?
+            .draw_series(LineSeries::new(result.into_iter(), color))?
             .label(label)
-            .legend(move |(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &color));
+            .legend(move |(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], color));
     }
 
     chart
         .configure_series_labels()
-        .background_style(&WHITE.mix(0.8))
-        .border_style(&BLACK)
+        .background_style(WHITE.mix(0.8))
+        .border_style(BLACK)
         .draw()?;
 
     Ok(())

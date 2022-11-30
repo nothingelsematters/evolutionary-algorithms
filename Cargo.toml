@@ -6,8 +6,9 @@ edition = "2018"
 
 [dependencies]
 # common
-tokio = { version = "1.17.0", features = ["full"] }
+tokio = { version = "1.22.0", features = ["full"] }
 lazy_static = "1.4.0"
+futures = "0.3.25"
 
 # algorithm
 bit-vec = "0.6.3"
@@ -16,5 +17,5 @@ probability = "0.20"
 
 # plot representation
 plotters = "0.3.2"
-plotly = "0.7.0"
+plotly = "0.8.3"
 image = "0.24.2"
