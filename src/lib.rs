@@ -1,5 +1,7 @@
 pub mod algorithm;
+#[cfg(test)]
 mod draw;
-pub mod experiments;
+#[cfg(test)]
+mod experiments;
 pub mod function;
 mod utils;

@@ -104,7 +104,8 @@ fn save_metrics_plot(n: usize, mu: usize) {
     .expect("frame saving");
 }
 
-pub fn dynamic_metrics_experiment() {
+#[test]
+fn dynamic_metrics_experiment() {
     const N: usize = 512;
     let mus = vec![2, 9, 128];
 

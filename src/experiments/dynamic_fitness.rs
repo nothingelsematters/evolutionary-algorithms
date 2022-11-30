@@ -94,7 +94,8 @@ fn save_animation(n: usize, mu: usize) {
     println!("Saving animation: {}", gif_path);
 }
 
-pub fn dynamic_fitness_experiment() {
+#[test]
+fn dynamic_fitness_experiment() {
     const N: usize = 512;
     let mus = vec![2, 9, 128];
 

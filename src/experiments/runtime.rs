@@ -7,7 +7,8 @@ use crate::{
     function::{self, Function},
 };
 
-pub async fn runtime_experiment() {
+#[tokio::test]
+async fn runtime_experiment() {
     // run().await;
     draw().await;
 }

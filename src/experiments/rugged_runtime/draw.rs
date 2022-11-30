@@ -1,6 +1,7 @@
 use crate::draw::utils::draw_runtime;
 
-pub async fn draw_rugged() {
+#[tokio::test]
+async fn draw_rugged_one_max() {
     draw_runtime(
         "rugged-runtime/mu-plus-ones",
         "RuggedOneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
@@ -130,7 +131,8 @@ pub async fn draw_rugged() {
     );
 }
 
-pub async fn draw() {
+#[tokio::test]
+async fn draw_one_max() {
     draw_runtime(
         "rugged-runtime/mu-plus-ones",
         "OneMax average runtimes: x = log2(n), y = avg / (nlog(n))",

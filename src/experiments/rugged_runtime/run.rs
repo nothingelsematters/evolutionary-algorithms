@@ -12,7 +12,8 @@ use crate::{
     function::{self, Function},
 };
 
-pub async fn rugged_runtime_experiment() {
+#[tokio::test]
+async fn rugged_runtime_experiment() {
     const THREADS: usize = 6;
     const RUNS: usize = 128;
 
