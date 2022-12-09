@@ -278,6 +278,6 @@ Runtimes: [95612, 146476, 154132, 86548, 227524, 73172, 50908, 66836, 39996, 990
 Average: 108165.75
 Evaluated in 42.65s
 
-running 1 test
 sqrt(log2(n))
 Running (1 + (λ, λ)), λ = 3, c = 0.3333333333333333 on OneMax(n = 1024)
+Progress:

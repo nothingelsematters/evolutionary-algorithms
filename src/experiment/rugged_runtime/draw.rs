@@ -1,7 +1,7 @@
 use crate::draw::utils::draw_runtime;
 
-#[tokio::test]
-async fn draw_rugged() {
+#[test]
+fn draw_rugged_2() {
     draw_runtime(
         "rugged-runtime/mu-plus-ones",
         "RuggedOneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
@@ -94,8 +94,8 @@ async fn draw_rugged() {
 
     draw_runtime(
         "rugged-runtime/one-plus-lambda-lambda",
-        "(1 + (λ, λ)) on RuggedOneMax average runtimes: x = log2(n), y = avg / n^2",
-        |(n, iters)| (n.log2(), iters / (n * n)),
+        "(1 + (λ, λ)) on RuggedOneMax average runtimes: x = log2(n), y = avg / (n^(3/2))",
+        |(n, iters)| (n.log2(), iters / (n.powf(3.0 / 2.0))),
         vec![
             (
                 "sqrt(log2(n))",
@@ -131,8 +131,187 @@ async fn draw_rugged() {
     );
 }
 
-#[tokio::test]
-async fn draw_simple() {
+#[test]
+fn draw_rugged_3_mu1() {
+    let results = vec![
+        (
+            "(μ + 1), μ = 2",
+            vec![
+                (32.0, 5895.8125),
+                (64.0, 64776.0),
+                (128.0, 374912.0859375),
+                (256.0, 3246850.3828125),
+            ],
+        ),
+        (
+            "(μ + 1), μ = log2(n)",
+            vec![
+                (32.0, 2122.484375),
+                (64.0, 6354.59375),
+                (128.0, 19430.796875),
+                (256.0, 78007.7109375),
+                (512.0, 282204.6328125),
+                (1024.0, 1106023.5625),
+            ],
+        ),
+        (
+            "(μ + 1), μ = sqrt(n)",
+            vec![
+                (32.0, 2146.078125),
+                (64.0, 3727.390625),
+                (128.0, 5321.0859375),
+                (256.0, 8586.4296875),
+                (512.0, 17825.5078125),
+                (1024.0, 37625.2734375),
+                (2048.0, 87598.3046875),
+                (4096.0, 210856.359375),
+                (8192.0, 519832.03125),
+            ],
+        ),
+        (
+            "(μ + 1) w/ chm, μ = 2",
+            vec![
+                (32.0, 778.3671875),
+                (64.0, 1592.1796875),
+                (128.0, 3082.8515625),
+                (256.0, 6807.0078125),
+                (512.0, 14565.4921875),
+                (1024.0, 31678.59375),
+                (2048.0, 67976.921875),
+                (4096.0, 142516.9765625),
+                (8192.0, 306871.015625),
+            ],
+        ),
+        (
+            "(μ + 1) w/ chm, μ = log2(n)",
+            vec![
+                (32.0, 608.4375),
+                (64.0, 1274.109375),
+                (128.0, 2462.9921875),
+                (256.0, 5468.4609375),
+                (512.0, 11454.625),
+                (1024.0, 25282.7578125),
+                (2048.0, 55231.0),
+                (4096.0, 118990.5078125),
+                (8192.0, 256355.5234375),
+            ],
+        ),
+        (
+            "(μ + 1) w/ chm, μ = sqrt(n)",
+            vec![
+                (32.0, 637.5625),
+                (64.0, 1189.421875),
+                (128.0, 2569.9453125),
+                (256.0, 5595.328125),
+                (512.0, 12423.3515625),
+                (1024.0, 27481.6171875),
+                (2048.0, 61316.703125),
+            ],
+        ),
+    ];
+
+    draw_runtime(
+        "rugged-runtime/rugged-one-max-3/mu-plus-one/full",
+        "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
+        |(n, iters)| (n.log2(), iters / n.powi(2)),
+        results.clone(),
+    );
+
+    draw_runtime(
+        "rugged-runtime/rugged-one-max-3/mu-plus-one/without-common-2",
+        "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
+        |(n, iters)| (n.log2(), iters / (n * n.log2())),
+        results[1..].to_vec(),
+    );
+
+    // draw_runtime(
+    //     "rugged-runtime/rugged-one-max-3/mu-plus-one/common-2",
+    //     "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n^2 sqrt(n))",
+    //     |(n, iters)| (n.log2(), iters / (n.powi(2) * n.sqrt())),
+    //     results[0..=0].to_vec(),
+    // );
+
+    draw_runtime(
+        "rugged-runtime/rugged-one-max-3/mu-plus-one/without-common-2-log",
+        "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
+        |(n, iters)| (n.log2(), iters / (n * n.log2())),
+        results[2..].to_vec(),
+    );
+
+    // draw_runtime(
+    //     "rugged-runtime/rugged-one-max-3/mu-plus-one/common-log-n3",
+    //     "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^3",
+    //     |(n, iters)| (n.log2(), iters / (n.powf(3.0))),
+    //     results[1..=1].to_vec(),
+    // );
+
+    // draw_runtime(
+    //     "rugged-runtime/rugged-one-max-3/mu-plus-one/chm-n2",
+    //     "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
+    //     |(n, iters)| (n.log2(), iters / n.powi(2)),
+    //     results[3..].to_vec(),
+    // );
+
+    draw_runtime(
+        "rugged-runtime/rugged-one-max-3/mu-plus-one/chm-nlog",
+        "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
+        |(n, iters)| (n.log2(), iters / (n * n.log2())),
+        results[3..].to_vec(),
+    );
+}
+
+#[test]
+fn draw_rugged_3_1ll() {
+    let results = vec![
+        (
+            "(1 + (λ, λ)) sqrt(log2(n))",
+            vec![
+                (32.0, 14381.96875),
+                (64.0, 112233.375),
+                (128.0, 925660.71875),
+                (256.0, 7398737.9375),
+                (512.0, 33784227.609375),
+            ],
+        ),
+        (
+            "(1 + (λ, λ)) log2(n)",
+            vec![
+                (32.0, 6421.40625),
+                (64.0, 34264.40625),
+                (128.0, 186671.40625),
+                (256.0, 1092839.375),
+                (512.0, 5453118.5625),
+            ],
+        ),
+        (
+            "(1 + (λ, λ)) sqrt(n)",
+            vec![
+                (32.0, 6651.640625),
+                (64.0, 29879.375),
+                (128.0, 112464.171875),
+                (256.0, 528463.0),
+                (512.0, 2327369.34375),
+            ],
+        ),
+    ];
+
+    draw_runtime(
+        "rugged-runtime/rugged-one-max-3/one-plus-lambda-lambda/full",
+        "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
+        |(n, iters)| (n.log2(), iters / n.powi(2)),
+        results.clone(),
+    );
+
+    draw_runtime(
+        "rugged-runtime/rugged-one-max-3/one-plus-lambda-lambda/without-sqrt-log",
+        "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
+        |(n, iters)| (n.log2(), iters / n.powi(2)),
+        results[1..].to_vec(),
+    );
+}
+
+#[test]
+fn draw_simple() {
     draw_runtime(
         "rugged-runtime/other/mu-plus-ones-simple-one-max",
         "OneMax average runtimes: x = log2(n), y = avg / (nlog(n))",

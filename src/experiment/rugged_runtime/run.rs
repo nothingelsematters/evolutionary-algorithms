@@ -3,7 +3,7 @@ use std::{
     fmt::Display,
     io::{stdout, Write},
     sync::{Arc, Mutex},
-    time::Instant,
+    time::{Duration, Instant},
 };
 use tokio::runtime::Runtime;
 
@@ -12,17 +12,17 @@ use crate::{
     function::{self, Function},
 };
 
+const THREADS: usize = 6;
+const RUNS: usize = 128;
+
 #[tokio::test]
 async fn rugged_runtime() {
-    const THREADS: usize = 6;
-    const RUNS: usize = 128;
-
     let runtime = tokio::runtime::Builder::new_multi_thread()
         .worker_threads(THREADS)
         .build()
         .expect("thread pool building");
 
-    let ns: Vec<usize> = (10..=15).map(|x| 1 << x).collect();
+    let ns: Vec<usize> = (5..=9).map(|x| 1 << x).collect();
 
     // (μ + 1)
 
@@ -44,8 +44,7 @@ async fn rugged_runtime() {
     ];
 
     for n in ns {
-        // let function = function::RuggedOneMax::new(n);
-        let function = function::OneMax::new(n);
+        let function = function::RuggedOneMax::new(3, n);
 
         // for (mu_getter_name, mu_getter) in mu_getters.iter() {
         //     let mu = mu_getter(n);
@@ -81,17 +80,30 @@ where
     A: Algorithm + Display + Send + Copy + 'static,
     F: Function + Display + Send + Copy + 'static,
 {
-    async fn run_task<A, F>(algorithm: A, function: F, progress_counter: Arc<Mutex<usize>>) -> usize
+    async fn run_task<A, F>(
+        algorithm: A,
+        function: F,
+        progress_counter: Arc<Mutex<(usize, Duration)>>,
+    ) -> usize
     where
         A: Algorithm + Send,
         F: Function + Send,
     {
+        let now = Instant::now();
         let result = launch::get_fitness_evaluations(&algorithm, &function);
+        let elapsed = now.elapsed();
 
         let mut guard = progress_counter.lock().expect("mutex locking");
-        print!("{guard} ");
+        guard.0 += 1;
+        guard.1 += elapsed;
+        let left = ((RUNS - guard.0) as f64 / THREADS as f64)
+            * (guard.1.as_secs() as f64 / guard.0 as f64);
+        print!(
+            "{} ({:?} s left) ",
+            guard.0 - 1,
+            Duration::new(left as u64, 0),
+        );
         stdout().flush().expect("stdout flush");
-        *guard += 1;
 
         result
     }
@@ -99,7 +111,7 @@ where
     let now = Instant::now();
     println!("Running {} on {}", algorithm, function);
 
-    let progress_counter = Arc::new(Mutex::new(0));
+    let progress_counter = Arc::new(Mutex::new((0, Duration::new(0, 0))));
 
     print!("Progress: ");
     let runtimes = join_all(
