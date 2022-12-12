@@ -166,6 +166,8 @@ fn draw_rugged_3_mu1() {
                 (2048.0, 87598.3046875),
                 (4096.0, 210856.359375),
                 (8192.0, 519832.03125),
+                (16384.0, 1220096.4296875),
+                (32768.0, 2934197.6015625),
             ],
         ),
         (
@@ -236,6 +238,13 @@ fn draw_rugged_3_mu1() {
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
         |(n, iters)| (n.log2(), iters / (n * n.log2())),
         results[2..].to_vec(),
+    );
+
+    draw_runtime(
+        "rugged-runtime/rugged-one-max-3/mu-plus-one/common-sqrt",
+        "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
+        |(n, iters)| (n.log2(), iters / (n * n.log2())),
+        results[2..=2].to_vec(),
     );
 
     // draw_runtime(

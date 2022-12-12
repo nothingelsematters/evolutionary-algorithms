@@ -22,56 +22,54 @@ async fn rugged_runtime() {
         .build()
         .expect("thread pool building");
 
-    let ns: Vec<usize> = (5..=9).map(|x| 1 << x).collect();
+    let ns: Vec<usize> = (14..=16).map(|x| 1 << x).collect();
 
-    // (μ + 1)
+    #[allow(clippy::type_complexity)]
+    let mu_getters: Vec<(&str, Box<dyn Fn(usize) -> usize>)> = vec![
+        // ("2", Box::new(|_: usize| 2)),
+        // ("log2(n)", Box::new(|x: usize| (x as f64).log2() as usize)),
+        ("sqrt(n)", Box::new(|x: usize| (x as f64).sqrt() as usize)),
+    ];
 
     // #[allow(clippy::type_complexity)]
-    // let mu_getters: Vec<(&str, Box<dyn Fn(usize) -> usize>)> = vec![
-    //     ("2", Box::new(|_: usize| 2)),
+    // let lambda_getters: Vec<(&str, Box<dyn Fn(usize) -> usize>)> = vec![
+    //     (
+    //         "sqrt(log2(n))",
+    //         Box::new(|x: usize| (x as f64).log2().sqrt() as usize),
+    //     ),
     //     ("log2(n)", Box::new(|x: usize| (x as f64).log2() as usize)),
     //     ("sqrt(n)", Box::new(|x: usize| (x as f64).sqrt() as usize)),
     // ];
 
-    #[allow(clippy::type_complexity)]
-    let lambda_getters: Vec<(&str, Box<dyn Fn(usize) -> usize>)> = vec![
-        (
-            "sqrt(log2(n))",
-            Box::new(|x: usize| (x as f64).log2().sqrt() as usize),
-        ),
-        ("log2(n)", Box::new(|x: usize| (x as f64).log2() as usize)),
-        ("sqrt(n)", Box::new(|x: usize| (x as f64).sqrt() as usize)),
-    ];
-
     for n in ns {
         let function = function::RuggedOneMax::new(3, n);
 
-        // for (mu_getter_name, mu_getter) in mu_getters.iter() {
-        //     let mu = mu_getter(n);
+        for (mu_getter_name, mu_getter) in mu_getters.iter() {
+            let mu = mu_getter(n);
 
-        //     let mu_common = algorithm::mu_plus_one::Common::new(mu, 0.99, 1.0 / (n as f64));
-        //     println!("{mu_getter_name}");
-        //     run_algorithm(&runtime, mu_common, function, RUNS).await;
+            let mu_common = algorithm::mu_plus_one::Common::new(mu, 0.99, 1.0 / (n as f64));
+            println!("{mu_getter_name}");
+            run_algorithm(&runtime, mu_common, function, RUNS).await;
 
-        //     let mu_chm =
-        //         algorithm::mu_plus_one::ConvexHullMaximization::new(mu, 0.99, 1.0 / (n as f64));
-        //     println!("{mu_getter_name}");
-        //     run_algorithm(&runtime, mu_chm, function, RUNS).await;
-        // }
-        // println!();
-
-        for (lambda_getter_name, lambda_getter) in lambda_getters.iter() {
-            let lambda = lambda_getter(n);
-            let one_plus_lambda_lambda = algorithm::OnePlusLambdaLambda::new(
-                lambda,
-                lambda as f64 / function.n() as f64,
-                1.0 / lambda as f64,
-            );
-
-            println!("{lambda_getter_name}");
-            run_algorithm(&runtime, one_plus_lambda_lambda, function, RUNS).await;
+            // let mu_chm =
+            //     algorithm::mu_plus_one::ConvexHullMaximization::new(mu, 0.99, 1.0 / (n as f64));
+            // println!("{mu_getter_name}");
+            // run_algorithm(&runtime, mu_chm, function, RUNS).await;
         }
         println!();
+
+        // for (lambda_getter_name, lambda_getter) in lambda_getters.iter() {
+        //     let lambda = lambda_getter(n);
+        //     let one_plus_lambda_lambda = algorithm::OnePlusLambdaLambda::new(
+        //         lambda,
+        //         lambda as f64 / function.n() as f64,
+        //         1.0 / lambda as f64,
+        //     );
+
+        //     println!("{lambda_getter_name}");
+        //     run_algorithm(&runtime, one_plus_lambda_lambda, function, RUNS).await;
+        // }
+        // println!();
     }
 }
 
