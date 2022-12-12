@@ -22,7 +22,7 @@ async fn rugged_runtime() {
         .build()
         .expect("thread pool building");
 
-    let ns: Vec<usize> = (14..=16).map(|x| 1 << x).collect();
+    let ns: Vec<usize> = (16..=16).map(|x| 1 << x).collect();
 
     #[allow(clippy::type_complexity)]
     let mu_getters: Vec<(&str, Box<dyn Fn(usize) -> usize>)> = vec![
