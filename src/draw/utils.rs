@@ -1,7 +1,9 @@
-use super::save_plot;
+use super::save_plot_with_description;
 
 pub fn draw_runtime<F>(
     file_name: &str,
+    x_description: &'static str,
+    y_description: &'static str,
     caption: &str,
     transformation: F,
     results: Vec<(&str, Vec<(f64, f64)>)>,
@@ -12,8 +14,9 @@ pub fn draw_runtime<F>(
         .into_iter()
         .map(|(i, x)| (i, x.into_iter().map(transformation).collect::<Vec<_>>()))
         .collect::<Vec<_>>();
+    println!("{caption}:\n{results:#?}\n\n");
 
-    let y_min = results
+    let _y_min = results
         .iter()
         .flat_map(|(_, vs)| vs.iter().map(|(_, y)| *y))
         .min_by_key(|y| *y as u64)
@@ -37,11 +40,13 @@ pub fn draw_runtime<F>(
         .max_by_key(|y| *y as u64)
         .unwrap();
 
-    save_plot(
+    save_plot_with_description(
         format!("plots/{}.png", file_name),
         results,
         x_min..x_max,
-        y_min..y_max,
+        0.0..y_max,
+        x_description,
+        y_description,
         caption,
         650,
         500,

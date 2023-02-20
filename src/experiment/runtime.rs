@@ -65,6 +65,8 @@ async fn run() {
 async fn draw() {
     draw_runtime(
         "runtime/common-one-max",
+        "",
+        "",
         "(μ + 1) on OneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
         |x| x,
         vec![
@@ -129,6 +131,8 @@ async fn draw() {
 
     draw_runtime(
         "runtime/common-leading-ones",
+        "",
+        "",
         "(μ + 1) on LeadingOnes average runtimes: x = log2(n), y = avg / n^2",
         |x| x,
         vec![

@@ -2,98 +2,122 @@ use crate::draw::utils::draw_runtime;
 
 #[test]
 fn draw_rugged_2() {
+    let mpoga = vec![
+        (
+            "(μ + 1), μ = 2",
+            vec![
+                (32.0, 2293.078125),
+                (64.0, 7952.890625),
+                (128.0, 34257.7890625),
+                (256.0, 131694.2265625),
+                (512.0, 588612.4609375),
+                (1024.0, 2118529.8984375),
+                (2048.0, 9085487.5234375),
+                (4096.0, 40115516.5703125),
+            ],
+        ),
+        (
+            "(μ + 1), μ = log2(n)",
+            vec![
+                (32.0, 824.9609375),
+                (64.0, 2534.3046875),
+                (128.0, 5935.859375),
+                (256.0, 15509.21875),
+                (512.0, 49459.1640625),
+                (1024.0, 119370.78125),
+                (2048.0, 364061.2734375),
+                (4096.0, 1194703.8828125),
+            ],
+        ),
+        (
+            "(μ + 1), μ = sqrt(n)",
+            vec![
+                (32.0, 814.359375),
+                (64.0, 1690.359375),
+                (128.0, 3725.140625),
+                (256.0, 7510.703125),
+                (512.0, 17795.3359375),
+                (1024.0, 39292.4609375),
+                (2048.0, 99250.8515625),
+                (4096.0, 229238.09375),
+                (8192.0, 586752.984375),
+            ],
+        ),
+        (
+            "(μ + 1) w/ chm, μ = 2",
+            vec![
+                (32.0, 388.8828125),
+                (64.0, 934.8203125),
+                (128.0, 2020.140625),
+                (256.0, 4693.34375),
+                (512.0, 10618.609375),
+                (1024.0, 22663.921875),
+                (2048.0, 48953.5703125),
+                (4096.0, 104520.703125),
+                (8192.0, 232147.78125),
+                (16384.0, 478313.6484375),
+            ],
+        ),
+        (
+            "(μ + 1) w/ chm, μ = log2(n)",
+            vec![
+                (32.0, 328.953125),
+                (64.0, 751.46875),
+                (128.0, 1731.25),
+                (256.0, 4066.25),
+                (512.0, 8675.203125),
+                (1024.0, 19369.421875),
+                (2048.0, 43506.2578125),
+                (4096.0, 94715.9140625),
+                (8192.0, 202706.0),
+            ],
+        ),
+        (
+            "(μ + 1) w/ chm, μ = sqrt(n)",
+            vec![
+                (32.0, 336.21875),
+                (64.0, 745.390625),
+                (128.0, 1740.703125),
+                (256.0, 4000.3671875),
+                (512.0, 9312.078125),
+                (1024.0, 21066.0625),
+                (2048.0, 48739.6953125),
+                (4096.0, 111678.75),
+            ],
+        ),
+    ];
+
     draw_runtime(
         "rugged-runtime/mu-plus-ones",
+        "average / (n log2(n))",
+        "log2(n)",
         "RuggedOneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
         |(n, iters)| (n.log2(), iters / (n * n.log2())),
-        vec![
-            // (
-            //     "(μ + 1), μ = 2",
-            //     vec![
-            //         (32.0, 2293.078125),
-            //         (64.0, 7952.890625),
-            //         (128.0, 34257.7890625),
-            //         (256.0, 131694.2265625),
-            //         (512.0, 588612.4609375),
-            //         (1024.0, 2118529.8984375),
-            //         (2048.0, 9085487.5234375),
-            //         (4096.0, 40115516.5703125),
-            //     ],
-            // ),
-            (
-                "(μ + 1), μ = log2(n)",
-                vec![
-                    (32.0, 824.9609375),
-                    (64.0, 2534.3046875),
-                    (128.0, 5935.859375),
-                    (256.0, 15509.21875),
-                    (512.0, 49459.1640625),
-                    (1024.0, 119370.78125),
-                    (2048.0, 364061.2734375),
-                    (4096.0, 1194703.8828125),
-                ],
-            ),
-            (
-                "(μ + 1), μ = sqrt(n)",
-                vec![
-                    (32.0, 814.359375),
-                    (64.0, 1690.359375),
-                    (128.0, 3725.140625),
-                    (256.0, 7510.703125),
-                    (512.0, 17795.3359375),
-                    (1024.0, 39292.4609375),
-                    (2048.0, 99250.8515625),
-                    (4096.0, 229238.09375),
-                    (8192.0, 586752.984375),
-                ],
-            ),
-            (
-                "(μ + 1) w/ chm, μ = 2",
-                vec![
-                    (32.0, 388.8828125),
-                    (64.0, 934.8203125),
-                    (128.0, 2020.140625),
-                    (256.0, 4693.34375),
-                    (512.0, 10618.609375),
-                    (1024.0, 22663.921875),
-                    (2048.0, 48953.5703125),
-                    (4096.0, 104520.703125),
-                    (8192.0, 232147.78125),
-                    (16384.0, 478313.6484375),
-                ],
-            ),
-            (
-                "(μ + 1) w/ chm, μ = log2(n)",
-                vec![
-                    (32.0, 328.953125),
-                    (64.0, 751.46875),
-                    (128.0, 1731.25),
-                    (256.0, 4066.25),
-                    (512.0, 8675.203125),
-                    (1024.0, 19369.421875),
-                    (2048.0, 43506.2578125),
-                    (4096.0, 94715.9140625),
-                    (8192.0, 202706.0),
-                ],
-            ),
-            (
-                "(μ + 1) w/ chm, μ = sqrt(n)",
-                vec![
-                    (32.0, 336.21875),
-                    (64.0, 745.390625),
-                    (128.0, 1740.703125),
-                    (256.0, 4000.3671875),
-                    (512.0, 9312.078125),
-                    (1024.0, 21066.0625),
-                    (2048.0, 48739.6953125),
-                    (4096.0, 111678.75),
-                ],
-            ),
-        ],
+        mpoga.clone(),
+    );
+
+    draw_runtime(
+        "average / (n log2(n))ed-runtime/mu-plus-one",
+        "",
+        "log2(n)",
+        "RuggedOneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
+        |(n, iters)| (n.log2(), iters / (n * n.log2())),
+        mpoga[..3].to_vec(),
+    );
+
+    draw_runtime(
+        "rugged-runtime/mu-plus-one-chm",
+        "average / (n log2(n))",
+        "log2(n)",
+        "RuggedOneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
+        |(n, iters)| (n.log2(), iters / (n * n.log2())),
+        mpoga[3..].to_vec(),
     );
 
     draw_runtime(
         "rugged-runtime/one-plus-lambda-lambda",
+        "",
+        "",
         "(1 + (λ, λ)) on RuggedOneMax average runtimes: x = log2(n), y = avg / (n^(3/2))",
         |(n, iters)| (n.log2(), iters / (n.powf(3.0 / 2.0))),
         vec![
@@ -168,6 +192,7 @@ fn draw_rugged_3_mu1() {
                 (8192.0, 519832.03125),
                 (16384.0, 1220096.4296875),
                 (32768.0, 2934197.6015625),
+                (65536.0, 7216446.359375),
             ],
         ),
         (
@@ -214,6 +239,8 @@ fn draw_rugged_3_mu1() {
 
     draw_runtime(
         "rugged-runtime/rugged-one-max-3/mu-plus-one/full",
+        "",
+        "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
         |(n, iters)| (n.log2(), iters / n.powi(2)),
         results.clone(),
@@ -221,6 +248,8 @@ fn draw_rugged_3_mu1() {
 
     draw_runtime(
         "rugged-runtime/rugged-one-max-3/mu-plus-one/without-common-2",
+        "",
+        "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
         |(n, iters)| (n.log2(), iters / (n * n.log2())),
         results[1..].to_vec(),
@@ -235,6 +264,8 @@ fn draw_rugged_3_mu1() {
 
     draw_runtime(
         "rugged-runtime/rugged-one-max-3/mu-plus-one/without-common-2-log",
+        "",
+        "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
         |(n, iters)| (n.log2(), iters / (n * n.log2())),
         results[2..].to_vec(),
@@ -242,6 +273,8 @@ fn draw_rugged_3_mu1() {
 
     draw_runtime(
         "rugged-runtime/rugged-one-max-3/mu-plus-one/common-sqrt",
+        "",
+        "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
         |(n, iters)| (n.log2(), iters / (n * n.log2())),
         results[2..=2].to_vec(),
@@ -263,6 +296,8 @@ fn draw_rugged_3_mu1() {
 
     draw_runtime(
         "rugged-runtime/rugged-one-max-3/mu-plus-one/chm-nlog",
+        "",
+        "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
         |(n, iters)| (n.log2(), iters / (n * n.log2())),
         results[3..].to_vec(),
@@ -306,6 +341,8 @@ fn draw_rugged_3_1ll() {
 
     draw_runtime(
         "rugged-runtime/rugged-one-max-3/one-plus-lambda-lambda/full",
+        "",
+        "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
         |(n, iters)| (n.log2(), iters / n.powi(2)),
         results.clone(),
@@ -313,6 +350,8 @@ fn draw_rugged_3_1ll() {
 
     draw_runtime(
         "rugged-runtime/rugged-one-max-3/one-plus-lambda-lambda/without-sqrt-log",
+        "",
+        "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
         |(n, iters)| (n.log2(), iters / n.powi(2)),
         results[1..].to_vec(),
@@ -323,6 +362,8 @@ fn draw_rugged_3_1ll() {
 fn draw_simple() {
     draw_runtime(
         "rugged-runtime/other/mu-plus-ones-simple-one-max",
+        "",
+        "",
         "OneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
         |(n, iters)| (n.log2(), iters / (n * n.log2())),
         vec![

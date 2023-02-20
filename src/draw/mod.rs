@@ -9,11 +9,13 @@ use std::path::Path;
 
 pub mod utils;
 
-fn draw_plot<DB>(
+fn draw_plot_with_description<DB>(
     root: DrawingArea<DB, Shift>,
     results: Vec<(&str, Vec<(f64, f64)>)>,
     x: Range<f64>,
     y: Range<f64>,
+    x_description: &'static str,
+    y_description: &'static str,
     caption: &str,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -29,7 +31,11 @@ where
         .y_label_area_size(30)
         .build_cartesian_2d(x, y)?;
 
-    chart.configure_mesh().draw()?;
+    chart
+        .configure_mesh()
+        .x_desc(x_description)
+        .y_desc(y_description)
+        .draw()?;
 
     let colors = vec![RED, BLUE, GREEN, YELLOW, CYAN, MAGENTA, WHITE, BLACK];
 
@@ -47,6 +53,20 @@ where
         .draw()?;
 
     Ok(())
+}
+
+fn draw_plot<DB>(
+    root: DrawingArea<DB, Shift>,
+    results: Vec<(&str, Vec<(f64, f64)>)>,
+    x: Range<f64>,
+    y: Range<f64>,
+    caption: &str,
+) -> Result<(), Box<dyn std::error::Error>>
+where
+    DB: DrawingBackend,
+    DB::ErrorType: 'static,
+{
+    draw_plot_with_description(root, results, x, y, "", "", caption)
 }
 
 pub fn get_plot(
@@ -70,6 +90,30 @@ pub fn get_plot(
     }
 
     Ok(data)
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn save_plot_with_description(
+    file_name: String,
+    results: Vec<(&str, Vec<(f64, f64)>)>,
+    x: Range<f64>,
+    y: Range<f64>,
+    x_description: &'static str,
+    y_description: &'static str,
+    caption: &str,
+    width: usize,
+    height: usize,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let backend = BitMapBackend::new(&file_name, (width as u32, height as u32)).into_drawing_area();
+    draw_plot_with_description(
+        backend,
+        results,
+        x,
+        y,
+        x_description,
+        y_description,
+        caption,
+    )
 }
 
 pub fn save_plot(
