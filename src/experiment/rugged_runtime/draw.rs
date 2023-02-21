@@ -454,3 +454,73 @@ fn draw_simple() {
         ],
     );
 }
+
+#[test]
+fn draw_rugged_optimal_10() {
+    let results = vec![
+        (
+            "(μ + 1)",
+            vec![
+                (2.0, 2250282.421875),
+                (4.0, 816314.640625),
+                (8.0, 180495.0546875),
+                (16.0, 62315.5703125),
+                (32.0, 39846.0),
+                (64.0, 37322.703125),
+                (128.0, 34879.46875),
+                (256.0, 27748.3359375),
+                (512.0, 37650.046875),
+            ],
+        ),
+        (
+            "(1 + (λ, λ))",
+            vec![
+                (2.0, 5471479.25),
+                (4.0, 2531275.5),
+                (8.0, 1131533.125),
+                (16.0, 567447.0),
+                (32.0, 311715.0),
+                (64.0, 263247.0),
+                (128.0, 331414.0),
+                (256.0, 700760.0),
+                (512.0, 2128744.0),
+            ],
+        ),
+    ];
+
+    draw_runtime(
+        "rugged-runtime/optimal/mpoga-10",
+        "μ",
+        "iterations",
+        "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
+        |(n, iters)| (n.log2(), iters / 10_000.0),
+        results[..1].to_vec(),
+    );
+
+    draw_runtime(
+        "rugged-runtime/optimal/mpoga-10-zoom",
+        "μ",
+        "iterations",
+        "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
+        |(n, iters)| (n.log2(), iters / 10_000.0),
+        vec![(results[0].0, results[0].1[5..].to_vec())],
+    );
+
+    draw_runtime(
+        "rugged-runtime/optimal/ollga-10",
+        "λ",
+        "iterations",
+        "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
+        |(n, iters)| (n.log2(), iters / 10_000.0),
+        results[1..].to_vec(),
+    );
+
+    draw_runtime(
+        "rugged-runtime/optimal/ollga-10-zoom",
+        "λ",
+        "iterations",
+        "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
+        |(n, iters)| (n.log2(), iters / 10_000.0),
+        vec![(results[1].0, results[1].1[3..8].to_vec())],
+    );
+}
