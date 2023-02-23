@@ -41,7 +41,7 @@ pub fn draw_runtime<F>(
         .unwrap();
 
     save_plot_with_description(
-        format!("plots/{}.png", file_name),
+        format!("results/{}.png", file_name),
         results,
         x_min..x_max,
         0.0..y_max,

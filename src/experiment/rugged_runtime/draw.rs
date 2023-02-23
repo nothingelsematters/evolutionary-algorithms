@@ -489,7 +489,7 @@ fn draw_rugged_optimal_10() {
     ];
 
     draw_runtime(
-        "rugged-runtime/optimal/mpoga-10",
+        "rugged-runtime/optimal-parameters/mpoga-10",
         "μ",
         "iterations",
         "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
@@ -498,7 +498,7 @@ fn draw_rugged_optimal_10() {
     );
 
     draw_runtime(
-        "rugged-runtime/optimal/mpoga-10-zoom",
+        "rugged-runtime/optimal-parameters/mpoga-10-zoom",
         "μ",
         "iterations",
         "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
@@ -507,7 +507,7 @@ fn draw_rugged_optimal_10() {
     );
 
     draw_runtime(
-        "rugged-runtime/optimal/ollga-10",
+        "rugged-runtime/optimal-parameters/ollga-10",
         "λ",
         "iterations",
         "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
@@ -516,7 +516,7 @@ fn draw_rugged_optimal_10() {
     );
 
     draw_runtime(
-        "rugged-runtime/optimal/ollga-10-zoom",
+        "rugged-runtime/optimal-parameters/ollga-10-zoom",
         "λ",
         "iterations",
         "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
