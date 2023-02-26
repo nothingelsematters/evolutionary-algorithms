@@ -1,3 +1,5 @@
+.vscode/
+.ipynb_checkpoints
 target/
 Cargo.lock
 .DS_Store
