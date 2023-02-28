@@ -1,5 +1,5 @@
 use std::{
-    fmt::Display,
+    fmt::{Debug, Display},
     io::{stdout, Write},
     sync::{Arc, Mutex},
     time::{Duration, Instant},
@@ -30,6 +30,7 @@ where
     A: Algorithm + Send,
     F: Function + Send,
     L: Fn(&A, &F) -> T,
+    T: Debug,
 {
     let now = Instant::now();
     let result = launcher(&algorithm, &function);
@@ -41,7 +42,7 @@ where
     let left =
         ((runs - guard.0) as f64 / threads as f64) * (guard.1.as_secs() as f64 / guard.0 as f64);
     print!(
-        "{} ({:?} s left) ",
+        "{} ({result:?}; {:?} s left) ",
         guard.0 - 1,
         Duration::new(left as u64, 0),
     );
