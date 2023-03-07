@@ -14,7 +14,6 @@ pub fn draw_runtime<F>(
         .into_iter()
         .map(|(i, x)| (i, x.into_iter().map(transformation).collect::<Vec<_>>()))
         .collect::<Vec<_>>();
-    println!("{caption}:\n{results:#?}\n\n");
 
     let _y_min = results
         .iter()

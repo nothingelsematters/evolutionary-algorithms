@@ -88,7 +88,7 @@ fn draw_rugged_2() {
     ];
 
     draw_runtime(
-        "rugged-runtime/mu-plus-ones",
+        "rugged-onemax/mu-plus-ones",
         "average / (n log2(n))",
         "log2(n)",
         "RuggedOneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
@@ -106,7 +106,7 @@ fn draw_rugged_2() {
     );
 
     draw_runtime(
-        "rugged-runtime/mu-plus-one-chm",
+        "rugged-onemax/mu-plus-one-chm",
         "average / (n log2(n))",
         "log2(n)",
         "RuggedOneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
@@ -115,7 +115,7 @@ fn draw_rugged_2() {
     );
 
     draw_runtime(
-        "rugged-runtime/one-plus-lambda-lambda",
+        "rugged-onemax/one-plus-lambda-lambda",
         "",
         "",
         "(1 + (λ, λ)) on RuggedOneMax average runtimes: x = log2(n), y = avg / (n^(3/2))",
@@ -238,7 +238,7 @@ fn draw_rugged_3_mu1() {
     ];
 
     draw_runtime(
-        "rugged-runtime/rugged-one-max-3/mu-plus-one/full",
+        "rugged-onemax/rugged-one-max-3/mu-plus-one/full",
         "",
         "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
@@ -247,7 +247,7 @@ fn draw_rugged_3_mu1() {
     );
 
     draw_runtime(
-        "rugged-runtime/rugged-one-max-3/mu-plus-one/without-common-2",
+        "rugged-onemax/rugged-one-max-3/mu-plus-one/without-common-2",
         "",
         "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
@@ -256,14 +256,14 @@ fn draw_rugged_3_mu1() {
     );
 
     // draw_runtime(
-    //     "rugged-runtime/rugged-one-max-3/mu-plus-one/common-2",
+    //     "rugged-onemax/rugged-one-max-3/mu-plus-one/common-2",
     //     "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n^2 sqrt(n))",
     //     |(n, iters)| (n.log2(), iters / (n.powi(2) * n.sqrt())),
     //     results[0..=0].to_vec(),
     // );
 
     draw_runtime(
-        "rugged-runtime/rugged-one-max-3/mu-plus-one/without-common-2-log",
+        "rugged-onemax/rugged-one-max-3/mu-plus-one/without-common-2-log",
         "",
         "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
@@ -272,7 +272,7 @@ fn draw_rugged_3_mu1() {
     );
 
     draw_runtime(
-        "rugged-runtime/rugged-one-max-3/mu-plus-one/common-sqrt",
+        "rugged-onemax/rugged-one-max-3/mu-plus-one/common-sqrt",
         "",
         "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
@@ -281,21 +281,21 @@ fn draw_rugged_3_mu1() {
     );
 
     // draw_runtime(
-    //     "rugged-runtime/rugged-one-max-3/mu-plus-one/common-log-n3",
+    //     "rugged-onemax/rugged-one-max-3/mu-plus-one/common-log-n3",
     //     "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^3",
     //     |(n, iters)| (n.log2(), iters / (n.powf(3.0))),
     //     results[1..=1].to_vec(),
     // );
 
     // draw_runtime(
-    //     "rugged-runtime/rugged-one-max-3/mu-plus-one/chm-n2",
+    //     "rugged-onemax/rugged-one-max-3/mu-plus-one/chm-n2",
     //     "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
     //     |(n, iters)| (n.log2(), iters / n.powi(2)),
     //     results[3..].to_vec(),
     // );
 
     draw_runtime(
-        "rugged-runtime/rugged-one-max-3/mu-plus-one/chm-nlog",
+        "rugged-onemax/rugged-one-max-3/mu-plus-one/chm-nlog",
         "",
         "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / (n log2(n))",
@@ -340,7 +340,7 @@ fn draw_rugged_3_1ll() {
     ];
 
     draw_runtime(
-        "rugged-runtime/rugged-one-max-3/one-plus-lambda-lambda/full",
+        "rugged-onemax/rugged-one-max-3/one-plus-lambda-lambda/full",
         "",
         "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
@@ -349,7 +349,7 @@ fn draw_rugged_3_1ll() {
     );
 
     draw_runtime(
-        "rugged-runtime/rugged-one-max-3/one-plus-lambda-lambda/without-sqrt-log",
+        "rugged-onemax/rugged-one-max-3/one-plus-lambda-lambda/without-sqrt-log",
         "",
         "",
         "RuggedOneMax(k = 3) average runtimes: x = log2(n), y = avg / n^2",
@@ -361,7 +361,7 @@ fn draw_rugged_3_1ll() {
 #[test]
 fn draw_simple() {
     draw_runtime(
-        "rugged-runtime/other/mu-plus-ones-simple-one-max",
+        "rugged-onemax/other/mu-plus-ones-simple-one-max",
         "",
         "",
         "OneMax average runtimes: x = log2(n), y = avg / (nlog(n))",
@@ -489,38 +489,92 @@ fn draw_rugged_optimal_10() {
     ];
 
     draw_runtime(
-        "rugged-runtime/optimal-parameters/mpoga-10",
-        "μ",
-        "iterations",
-        "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
+        "rugged-onemax/optimal-parameters/10-mpoga",
+        "log2(μ)",
+        "fitness evaluations / 10^4",
+        "RuggedOneMax(k = 2) average runtimes",
         |(n, iters)| (n.log2(), iters / 10_000.0),
         results[..1].to_vec(),
     );
 
     draw_runtime(
-        "rugged-runtime/optimal-parameters/mpoga-10-zoom",
-        "μ",
-        "iterations",
-        "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
+        "rugged-onemax/optimal-parameters/10-mpoga-zoom",
+        "log2(μ)",
+        "fitness evaluations / 10^4",
+        "RuggedOneMax(k = 2) average runtimes",
         |(n, iters)| (n.log2(), iters / 10_000.0),
         vec![(results[0].0, results[0].1[5..].to_vec())],
     );
 
     draw_runtime(
-        "rugged-runtime/optimal-parameters/ollga-10",
-        "λ",
-        "iterations",
-        "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
+        "rugged-onemax/optimal-parameters/10-ollga",
+        "log2(λ)",
+        "fitness evaluations / 10^4",
+        "RuggedOneMax(k = 2) average runtimes",
         |(n, iters)| (n.log2(), iters / 10_000.0),
         results[1..].to_vec(),
     );
 
     draw_runtime(
-        "rugged-runtime/optimal-parameters/ollga-10-zoom",
-        "λ",
-        "iterations",
-        "RuggedOneMax average runtimes: x = population size, y = avg / 10^4",
+        "rugged-onemax/optimal-parameters/10-ollga-zoom",
+        "log2(λ)",
+        "fitness evaluations / 10^4",
+        "RuggedOneMax(k = 2) average runtimes",
         |(n, iters)| (n.log2(), iters / 10_000.0),
         vec![(results[1].0, results[1].1[3..8].to_vec())],
     );
+}
+
+#[test]
+fn draw_rugged_optimal_15() {
+    let results = vec![
+        (
+            "(μ + 1)",
+            vec![
+                (16.0, 30619748.34375),
+                (32.0, 4404176.7578125),
+                (64.0, 2849158.015625),
+                (128.0, 3296180.109375),
+                (256.0, 3699597.296875),
+                (512.0, 3840366.1640625),
+            ],
+        ),
+        ("(1 + (λ, λ))", vec![]),
+    ];
+
+    draw_runtime(
+        "rugged-onemax/optimal-parameters/15-mpoga",
+        "log2(μ)",
+        "fitness evaluations / 10^6",
+        "RuggedOneMax(k = 2) average runtimes",
+        |(n, iters)| (n.log2(), iters / 1_000_000.0),
+        results[..1].to_vec(),
+    );
+
+    draw_runtime(
+        "rugged-onemax/optimal-parameters/15-mpoga-zoom",
+        "log2(μ)",
+        "fitness evaluations / 10^6",
+        "RuggedOneMax(k = 2) average runtimes",
+        |(n, iters)| (n.log2(), iters / 1_000_000.0),
+        vec![(results[0].0, results[0].1[1..].to_vec())],
+    );
+
+    // draw_runtime(
+    //     "rugged-onemax/optimal-parameters/15-ollga",
+    //     "log2(λ)",
+    //     "fitness evaluations / 10^4",
+    //     "RuggedOneMax average runtimes: x = log2(population size), y = avg / 10^4",
+    //     |(n, iters)| (n.log2(), iters / 10_000.0),
+    //     results[1..].to_vec(),
+    // );
+
+    // draw_runtime(
+    //     "rugged-onemax/optimal-parameters/15-ollga-zoom",
+    //     "log2(λ)",
+    //     "fitness evaluations / 10^4",
+    //     "RuggedOneMax average runtimes: x = log2(population size), y = avg / 10^4",
+    //     |(n, iters)| (n.log2(), iters / 10_000.0),
+    //     vec![(results[1].0, results[1].1[3..8].to_vec())],
+    // );
 }
