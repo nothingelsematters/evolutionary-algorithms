@@ -23,7 +23,7 @@
   cargo test --release -- --nocapture rugged_optimal_parameters
   ```
 
-- run: `sbatch --cpus-per-task=32 --mem=1G --time=7-00:00:00 task.sh`
+- run: `sbatch --cpus-per-task=32 --mem=4G --time=14-00:00:00 task.sh`
 
 - check: `squeue -o "%.18i %.9P %.8j %.8C %.8u %.8T %.10m %.10M %.9l %.6D %R" | grep <username>`
 
