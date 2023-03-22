@@ -21,7 +21,8 @@ async fn rugged_optimal_parameters() {
 
     let log_n: usize = 15;
     let n: usize = 1 << log_n;
-    let population_sizes: Vec<usize> = (5..log_n as u32).map(|x| 1 << x).collect();
+    let population_sizes: Vec<usize> = [9, 6].into_iter().map(|x| 1 << x).collect();
+    // let population_sizes: Vec<usize> = (5..log_n as u32).map(|x| 1 << x).collect();
 
     let function = function::RuggedOneMax::new(2, n);
 
