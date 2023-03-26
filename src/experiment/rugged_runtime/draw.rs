@@ -546,7 +546,12 @@ fn draw_rugged_optimal_15() {
         ),
         (
             "(1 + (λ, λ))",
-            vec![(128.0, 67932422.0), (256.0, 43034264.0), (512.0, 44656008.0)],
+            vec![
+                (128.0, 67932422.0),
+                (256.0, 43034264.0),
+                (512.0, 44656008.0),
+                (1024.0, 60736224.0),
+            ],
         ),
     ];
 
@@ -576,13 +581,4 @@ fn draw_rugged_optimal_15() {
         |(n, iters)| (n.log2(), iters / 10_000_000.0),
         results[1..].to_vec(),
     );
-
-    // draw_runtime(
-    //     "rugged-onemax/optimal-parameters/15-ollga-zoom",
-    //     "log2(λ)",
-    //     "fitness evaluations / 10^4",
-    //     "RuggedOneMax average runtimes",
-    //     |(n, iters)| (n.log2(), iters / 10_000.0),
-    //     vec![(results[1].0, results[1].1[3..8].to_vec())],
-    // );
 }
