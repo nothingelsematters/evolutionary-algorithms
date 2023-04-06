@@ -40,6 +40,10 @@ impl Algorithm for ConvexHullMaximization {
             ConvexHullMaximization::break_ties,
         )
     }
+
+    fn stopping_criterea<F: Function>(population: &[Mutant], function: &F) -> bool {
+        population.last().unwrap().fitness >= function.best_fitness()
+    }
 }
 
 impl ConvexHullMaximization {
@@ -109,6 +113,10 @@ impl ConvexHullMaximization {
             .map(|(i, _)| i)
             .unwrap();
 
-        population.remove(i_terminated);
+        population.swap_remove(i_terminated);
+        let len = population.len();
+        if i_terminated != len {
+            population.swap(i_terminated, len - 1);
+        }
     }
 }
